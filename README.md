@@ -40,7 +40,7 @@ fof-locomotor-capacity-cohort/
 ```
 
 ## Ympäristön palauttaminen ja riippuvuudet
-Projekti käyttää renviä (asennetaan myöhemmin). Tällä hetkellä riippuvuudet ja ympäristö ovat vain luonnoksena.
+Projekti käyttää `renv`-pakettia (asennetaan myöhemmin). Tällä hetkellä riippuvuudet ja ympäristö ovat vain luonnoksena.
 Kun renv on käytössä, voit palauttaa ympäristön: `renv::restore()`.
 
 ## Synteettisen testin ja testien ajaminen
@@ -63,7 +63,7 @@ quarto render manuscript/smoke_test.qmd
 ```
 
 ## Data Availability
-Alkuperäinen aineisto on sensitiivistä geriatrista rekisteriaineistoa, eikä sitä ole jaeta tässä repositoriossa (Data Availability -luonnos, ks. [docs/restricted_data_policy.md](docs/restricted_data_policy.md)).
+Alkuperäinen aineisto on sensitiivistä geriatrista rekisteriaineistoa, eikä sitä jaeta tässä repositoriossa (Data Availability -luonnos, ks. [docs/restricted_data_policy.md](docs/restricted_data_policy.md)).
 
 ## Tietosuojarajoitteet
 1. Ainoastaan **synteettinen data** on sallittua Gitissä.

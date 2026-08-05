@@ -1,7 +1,12 @@
 # test_transform_locomotor_indicators.R
 
-# Normally we would load the package, but since we are not built, we source it.
-source("../../R/transform_locomotor_indicators.R")
+# Use robust paths for sourcing and fixture loading
+project_root <- normalizePath(file.path(getwd(), "../.."), mustWork = FALSE)
+if (!file.exists(file.path(project_root, "R", "transform_locomotor_indicators.R"))) {
+  project_root <- getwd() # Fallback if run from the project root directly
+}
+
+source(file.path(project_root, "R", "transform_locomotor_indicators.R"))
 
 test_that("transform_locomotor_indicators handles missing columns correctly", {
   df_missing <- data.frame(balance_left_seconds = 10, balance_right_seconds = 10)
@@ -47,8 +52,7 @@ test_that("input data is not modified as a side effect", {
 })
 
 test_that("synthetic fixture can be read and transformed", {
-  # Assuming tests are run from repository root or via testthat framework
-  fixture_path <- "../../data/synthetic/synthetic_fixture.csv"
+  fixture_path <- file.path(project_root, "data", "synthetic", "synthetic_fixture.csv")
   if (file.exists(fixture_path)) {
     df <- read.csv(fixture_path)
     res <- transform_locomotor_indicators(df)
