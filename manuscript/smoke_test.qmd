@@ -8,8 +8,8 @@ format: html
 **DISCLAIMER:** This document uses synthetic data. The results below are not research findings.
 
 ```{r setup, include=FALSE}
-source("../R/transform_locomotor_indicators.R")
-data <- read.csv("../data/synthetic/synthetic_fixture.csv")
+source("R/transform_locomotor_indicators.R")
+data <- read.csv("data/synthetic/synthetic_fixture.csv")
 transformed_data <- transform_locomotor_indicators(data)
 ```
 
