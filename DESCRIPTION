@@ -1,6 +1,6 @@
 Package: foflocomotorcapacitycohort
 Title: FOF and Locomotor Capacity Cohort
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R:
     person("Pending", "Author", email = "pending@example.com", role = c("aut", "cre"))
 Description: Analysis code and reproducibility materials for a 12-month cohort study on fear of falling and locomotor capacity.

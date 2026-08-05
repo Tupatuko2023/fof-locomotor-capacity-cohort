@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.0-dev]
+## [0.1.0.9000]
 ### Added
 - Initial safe MVP repository scaffold for fof-locomotor-capacity-cohort.
 - Synthetic data generation for testing.

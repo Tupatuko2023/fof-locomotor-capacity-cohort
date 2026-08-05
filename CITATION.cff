@@ -3,5 +3,5 @@ message: "If you use this software, please cite it as below."
 authors:
   - family-names: "TBD"
 title: "fof-locomotor-capacity-cohort"
-version: 0.1.0-dev
+version: 0.1.0.9000
 # DOI omitted until first Zenodo release
