@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Authors"
+    given-names: "Pending"
+title: "fof-locomotor-capacity-cohort"
+version: 0.1.0
+date-released: 2023-10-27
+url: "https://github.com/placeholder/fof-locomotor-capacity-cohort"

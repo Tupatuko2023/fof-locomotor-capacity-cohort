@@ -1,0 +1,24 @@
+.env
+.env.*
+.RData
+.Rhistory
+.Rproj.user/
+data/restricted/
+data/raw/
+secrets/
+credentials/
+*.rds
+*.RDS
+*.sav
+*.dta
+*.xlsx
+*.xls
+outputs/logs/
+manuscript/_freeze/
+manuscript/.quarto/
+
+# Allow explicitly
+!data/README.md
+!data/synthetic/
+!outputs/tables/.gitkeep
+!outputs/figures/.gitkeep
