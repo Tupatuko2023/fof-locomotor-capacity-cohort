@@ -11,6 +11,8 @@ Tämä on turvallinen MVP-scaffold 12-kuukauden kohorttitutkimukselle (FOF ja lo
 - **Sallittu:** Vain `data/synthetic/` hakemistossa oleva selvästi synteettiseksi merkitty ja generoitu testidata.
 - **Sallittu:** Aggregoidut taulukot ja kuviot (`outputs/` kansion alla, kunhan niissä ei ole osallistujatietoa).
 
+> Never modify manuscript conclusions or statistical interpretation unless explicitly instructed.
+
 ## Turvalliset työskentelypolut
 - Data luetaan `data/synthetic/` -kansiosta.
 - Testit sijaitsevat `tests/testthat/` -kansiossa.

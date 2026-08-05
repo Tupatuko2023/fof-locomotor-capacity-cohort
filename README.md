@@ -4,6 +4,8 @@ Analysis code and reproducibility materials for a 12-month cohort study on fear 
 ## Tarkoitus
 Tämä on tutkimuskohtainen R- ja Quarto-pohjainen analyysirepositorio, jonka tarkoituksena on dokumentoida 12 kuukauden kohorttianalyysi. Repositorio tekee näkyväksi analyysien, taulukoiden, kuvioiden ja lisämateriaalien yhteydet toisiinsa. Tämä MVP (Minimum Viable Product) sisältää toistaiseksi vain turvallisen scaffold-rakenteen ja synteettistä testidataa. **Oikeaa analyysikoodia tai käsikirjoitusta ei ole vielä migroitu.**
 
+> **This repository currently contains only a reproducibility scaffold. No analytical results are included.**
+
 ## Repository Tree
 ```
 fof-locomotor-capacity-cohort/

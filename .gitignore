@@ -16,6 +16,12 @@ credentials/
 outputs/logs/
 manuscript/_freeze/
 manuscript/.quarto/
+*.Rproj.user
+*.Ruserdata
+.Ruserdata
+renv/library/
+renv/staging/
+*.zip
 
 # Allow explicitly
 !data/README.md
