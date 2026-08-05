@@ -1,0 +1,22 @@
+---
+title: "Smoke Test for Data Pipeline"
+format: html
+---
+
+# Smoke Test
+
+**DISCLAIMER:** This document uses synthetic data. The results below are not research findings.
+
+```{r setup, include=FALSE}
+source("R/transform_locomotor_indicators.R")
+data <- read.csv("data/synthetic/synthetic_fixture.csv")
+transformed_data <- transform_locomotor_indicators(data)
+```
+
+## Summary Table
+
+Below is a safe summary table generated from the synthetic data.
+
+```{r}
+summary(transformed_data)
+```
