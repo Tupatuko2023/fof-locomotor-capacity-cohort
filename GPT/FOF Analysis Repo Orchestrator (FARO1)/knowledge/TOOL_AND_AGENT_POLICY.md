@@ -5,7 +5,7 @@
 ```yaml
 title: FARO1 Tool and Agent Policy
 document_id: FARO1-TOOL-AND-AGENT-POLICY
-version: 0.1.0
+version: 0.2.0
 status: approved
 priority: P0
 scope: Binding tool, command, automation and agent-boundary policy for FARO1-orchestrated research software work
@@ -61,12 +61,51 @@ When instructions conflict, stop the affected action and mark the unresolved poi
 - Inspect before editing.
 - Prefer read-only commands for orientation.
 - Prefer structured tools over ad hoc parsing when available.
-- Verify tool existence, task-relevant capability and version where relevant before using the tool or accepting its output as evidence. If verification is not possible, stop the affected action and mark the capability `NEEDS_VERIFICATION`.
+- Tool existence and task-relevant capability must be verified before the tool is used or its output is accepted as evidence.
+- If a required or acceptance-critical tool cannot be verified, stop the affected validation claim and mark it `NEEDS_VERIFICATION`.
+- If an optional, non-acceptance-critical tool cannot be verified, skip that tool when doing so is safe, record the omission as a non-blocking limitation with its residual risk and continue unrelated in-scope work.
 - Do not broaden filesystem, network or credential access for convenience.
 - Do not route sensitive, unknown or unnecessary content to external tools.
 - Do not continue a tool action after its safety classification becomes uncertain.
 - Preserve user changes unless explicitly authorized to modify them.
 - Treat generated files, caches, logs and screenshots as possible disclosure surfaces.
+
+### Bounded work package
+
+A bounded work package is an explicitly approved task scope that identifies:
+
+- the objective;
+- the allowed files or directory paths;
+- the permitted local tool and operation classes;
+- the required validation and evidence;
+- the excluded actions; and
+- the conditions that end or suspend the authorization.
+
+Authorization applies only while these boundaries remain satisfied.
+
+### MacroGate
+
+A MacroGate is the user's explicit upfront approval for one bounded work package.
+
+Within an active MacroGate, the agent may perform the necessary create, read, edit, format, test, render, inspect, Review, Validation and in-scope defect-fix actions inside the explicitly allowed paths without requesting separate approval for each technical sub-step.
+
+A MacroGate does not authorize staging, commit, push, pull request, release, publication, destructive operations, history rewriting, credential access, protected-data access or any action outside the explicitly approved boundary.
+
+### MaterialBoundaryChange
+
+A MaterialBoundaryChange occurs when the work requires any of the following:
+
+- access outside the approved files or directory paths;
+- a new or higher-risk data classification;
+- elevated permissions or new credentials;
+- a new external service or broader network use;
+- a dependency addition or material dependency update;
+- staging, commit, push, pull request, release or publication;
+- destructive cleanup, overwrite, deletion or history rewriting;
+- broader content exposure; or
+- another material expansion of the approved objective or authority.
+
+The affected action must stop and receive new explicit authorization before it continues.
 
 ## 6. Approved Read-Only Tool Classes
 
@@ -123,7 +162,9 @@ Commands are not eligible when they:
 
 If a command needs elevated permissions, network access or access outside the current writable scope, the request must state the reason and the bounded action.
 
-If permission scope, authorization, allowed path or execution authority is ambiguous, stop the affected action and mark the issue `NEEDS_VERIFICATION`. Permission must not be inferred from tool availability, repository contents, prior general approval or agent capability.
+Within an active MacroGate, permission is not ambiguous for necessary create, read, edit, format, test, render, inspect and in-scope defect-fix actions inside the explicitly allowed paths.
+
+Permission remains ambiguous when the boundary is not explicit or the proposed action would constitute a MaterialBoundaryChange. The affected action must then stop and be marked `NEEDS_VERIFICATION` until new authorization is obtained. Permission must not be inferred from tool availability, repository contents, prior general approval or agent capability.
 
 ## 9. Package Manager and Dependency Policy
 
@@ -262,7 +303,7 @@ References:
 
 - `KB_INDEX.md` is the manifest and routing authority.
 - `SAFETY_PRIVACY_GUARDRAILS.md` is the safety, privacy and protected-data authority.
-- `EVIDENCE_REVIEW_AND_ACCEPTANCE.md` is the future evidence review and acceptance authority.
+- `EVIDENCE_REVIEW_AND_ACCEPTANCE.md` owns evidence review, validation, acceptance and PASS/FAIL decision requirements.
 
 Proposed or absent files must not be represented as active runtime Knowledge sources.
 
@@ -271,8 +312,9 @@ Proposed or absent files must not be represented as active runtime Knowledge sou
 - [ ] Exactly one primary responsibility.
 - [ ] Complete canonical metadata.
 - [ ] Priority `P0`.
-- [ ] Status `approved`.
-- [ ] Evidence state `validated`.
+- [ ] During draft review, `status` is `draft` and `document_evidence_state` is `source-grounded`.
+- [ ] Before lifecycle approval is recorded, the document has passed content Review and Validation and received explicit Owner approval.
+- [ ] After lifecycle alignment, `status` is `approved` and `document_evidence_state` is `validated`, with the corresponding `KB_INDEX.md` registry entry aligned.
 - [ ] Load condition `task-conditional`.
 - [ ] Authority level `binding-policy`.
 - [ ] Tool and agent boundaries are defined.

@@ -5,7 +5,7 @@
 ```yaml
 title: FARO1 Safety and Privacy Guardrails
 document_id: FARO1-SAFETY-PRIVACY-GUARDRAILS
-version: 0.1.0
+version: 0.2.0
 status: approved
 priority: P0
 scope: Binding safety, privacy, protected-data and publication guardrails for FARO1-orchestrated research software work
@@ -143,19 +143,24 @@ Exact commands, scanning tools and PASS/FAIL procedures belong to `TOOL_AND_AGEN
 
 ## 15. Incident and Uncertainty Handling
 
-When an incident or uncertainty is found:
+When an incident, safety uncertainty or privacy uncertainty is found:
 
-1. Stop affected work.
-2. Do not copy, publish or expose further.
-3. Do not print sensitive contents.
-4. Preserve minimal non-sensitive evidence.
-5. Report path, type and risk, not content.
-6. Do not delete automatically.
-7. Do not rewrite history automatically.
-8. Do not rotate or revoke credentials without authorization.
-9. Escalate to the applicable user, data controller or authority.
-10. Mark unresolved scope `NEEDS_VERIFICATION`.
-11. Resume only after resolution or explicit scope exclusion.
+1. Stop the specifically affected work path, file, artifact, tool execution or decision.
+2. Do not automatically halt independent, already-authorized and safe work unless the uncertainty can reasonably affect that work as well.
+3. Do not copy, publish or expose further.
+4. Do not print sensitive contents.
+5. Preserve minimal non-sensitive evidence.
+6. Report path, type and risk, not content.
+7. Do not delete automatically.
+8. Do not rewrite history automatically.
+9. Do not rotate or revoke credentials without authorization.
+10. Escalate to the applicable user, data controller or authority when blocking uncertainty or an incident is present.
+11. Mark unresolved affected scope `NEEDS_VERIFICATION`.
+12. Resume affected work only after resolution or explicit scope exclusion.
+
+Blocking uncertainty includes unknown data sensitivity or classification, unclear provenance required for safe handling, suspected participant-level protected data, secret or credential exposure, privacy or security incident, unclear authority to handle protected material, and conflicting normative safety rules. Blocking uncertainty must not be downgraded to a non-blocking limitation.
+
+A non-blocking limitation is an uncertainty that affects only an optional, non-safety-critical and non-acceptance-critical check. It may be recorded with reason and residual risk while independent safe work continues. A non-blocking limitation must not support PASS for the affected claim and must not override `TOOL_AND_AGENT_POLICY.md` or `EVIDENCE_REVIEW_AND_ACCEPTANCE.md`.
 
 ## 16. Activation and Load Rules
 
@@ -191,8 +196,8 @@ SAFETY_PRIVACY_GUARDRAILS.md
 References:
 
 - `KB_INDEX.md` is the manifest and routing authority.
-- `TOOL_AND_AGENT_POLICY.md` is the future tool and execution-policy owner.
-- `EVIDENCE_REVIEW_AND_ACCEPTANCE.md` is the future evidence and acceptance owner.
+- `TOOL_AND_AGENT_POLICY.md` owns tool, command, agent and execution-policy details.
+- `EVIDENCE_REVIEW_AND_ACCEPTANCE.md` owns evidence, review, validation and acceptance procedures.
 - Approved project specifications may add stricter project-specific requirements.
 
 Proposed or absent files must not be represented as already active.
@@ -202,8 +207,9 @@ Proposed or absent files must not be represented as already active.
 - [ ] Exactly one primary responsibility.
 - [ ] Complete canonical metadata.
 - [ ] Priority `P0`.
-- [ ] Status `draft`.
-- [ ] Evidence state `source-grounded`.
+- [ ] During draft review, `status` is `draft` and `document_evidence_state` is `source-grounded`.
+- [ ] Before lifecycle approval is recorded, the document has passed content Review and Validation and received explicit Owner approval.
+- [ ] After lifecycle alignment, `status` is `approved` and `document_evidence_state` is `validated`, with the corresponding `KB_INDEX.md` registry entry aligned.
 - [ ] Load condition `always-safety`.
 - [ ] Authority level `guardrail`.
 - [ ] All 18 sections are present.

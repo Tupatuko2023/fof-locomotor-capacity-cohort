@@ -5,7 +5,7 @@
 ```yaml
 title: FARO1 Evidence Review and Acceptance
 document_id: FARO1-EVIDENCE-REVIEW-AND-ACCEPTANCE
-version: 0.1.0
+version: 0.2.0
 status: approved
 priority: P0
 scope: Binding evidence review, validation, acceptance, approval-gate and rollback principles for FARO1-orchestrated research software work
@@ -102,6 +102,12 @@ Evidence quality states are:
 
 Review and Validation are distinct mandatory gates and are not interchangeable. Review assesses whether the implementation, scope, evidence, dependencies, defects, safety constraints and acceptance criteria match the approved work package.
 
+Under an active MacroGate defined by `TOOL_AND_AGENT_POLICY.md`, Review and Validation may be performed by the agent as technical gates within the same bounded work package without separate human interaction for each technical sub-step.
+
+Review and Validation remain distinct gates. Each must produce source-grounded evidence appropriate to its own purpose, and PASS at one gate does not imply PASS or Acceptance at another gate.
+
+Final Acceptance, lifecycle approval, activation, staging, commit, push, pull request, release, publication and other Owner Approval Gates remain separate explicit decisions.
+
 Before acceptance, the review must check the narrowest applicable set of categories:
 
 - requested scope and allowed files;
@@ -166,7 +172,9 @@ Severity classes:
 - `Minor`: bounded correction needed; acceptance may continue only if the approval scope permits.
 - `Informational`: non-blocking note or residual risk.
 
-Defect fixes must stay within the authorized scope. If a fix requires broader policy changes or another document, stop and request a new work package.
+In-scope defect fixes may continue within the same MacroGate when they remain inside the approved bounded work package and do not constitute a `MaterialBoundaryChange` under `TOOL_AND_AGENT_POLICY.md`.
+
+If a fix requires broader policy changes, another document, new authority, external exposure, protected-data access or another MaterialBoundaryChange, stop the affected work and request the required authorization.
 
 ## 12. Owner Approval Gates
 
@@ -175,7 +183,7 @@ Owner approval is required for:
 - lifecycle approval of Knowledge documents;
 - activation of an approved document;
 - acceptance of unresolved defects;
-- commit, push, release or publication actions;
+- staging, commit, push, pull request, release or publication actions;
 - high-risk Git actions;
 - destructive rollback or cleanup;
 - scope changes that broaden access, authority or content exposure.
@@ -186,7 +194,7 @@ An Owner decision must state:
 - document, work package or artifact;
 - approval scope;
 - required corrections, if any;
-- explicit exclusions such as no activation, commit, push, release or publication.
+- explicit exclusions such as no activation, staging, commit, push, pull request, release or publication.
 
 Approval is not transferable to a broader scope unless explicitly stated.
 
@@ -253,7 +261,7 @@ Acceptance must not be granted when:
 - safety, privacy or tool-policy gates are unresolved;
 - generated artifacts are unreviewed for their intended use;
 - validation output is stale, unavailable or irrelevant and no limitation is recorded;
-- the acceptance would silently approve commit, push, release or activation without explicit scope.
+- the acceptance would silently approve activation, staging, commit, push, pull request, release or publication without explicit scope.
 
 ## 17. Dependencies and References
 
@@ -291,8 +299,9 @@ Proposed or absent files must not be represented as active runtime Knowledge sou
 - [ ] Exactly one primary responsibility.
 - [ ] Complete canonical metadata.
 - [ ] Priority `P0`.
-- [ ] Status `approved`.
-- [ ] Evidence state `validated`.
+- [ ] During draft review, `status` is `draft` and `document_evidence_state` is `source-grounded`.
+- [ ] Before lifecycle approval is recorded, the document has passed content Review and Validation and received explicit Owner approval.
+- [ ] After lifecycle alignment, `status` is `approved` and `document_evidence_state` is `validated`, with the corresponding `KB_INDEX.md` registry entry aligned.
 - [ ] Load condition `task-conditional`.
 - [ ] Authority level `binding-policy`.
 - [ ] Evidence categories are defined without becoming a tool policy.
