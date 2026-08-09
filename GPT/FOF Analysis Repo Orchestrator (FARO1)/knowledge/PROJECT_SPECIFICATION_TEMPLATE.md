@@ -5,7 +5,7 @@
 ```yaml
 title: FARO1 Project Specification Template
 document_id: FARO1-PROJECT-SPECIFICATION-TEMPLATE
-version: 0.1.0
+version: 0.2.0
 status: approved
 priority: P0
 scope: Template structure and required fields for a later FARO1 project specification
@@ -140,7 +140,68 @@ The completed project specification must define repository and artifact boundari
 
 This template does not prescribe repository architecture patterns. Repository design references belong to the appropriate approved reference document or project-specific source.
 
-## 10. Analysis and Output Fields
+## 10. Migration Contract Fields
+
+When the project includes source-to-target migration, the completed project specification must define a project-specific Migration Contract.
+
+The Migration Contract instantiates approved project choices. It must not copy migration pattern logic, privacy classifications, tool policy or evidence PASS/FAIL procedure from other Knowledge documents.
+
+Required fields:
+
+```yaml
+migration_contract:
+  migration_required: yes | no | NEEDS_VERIFICATION
+  source_repository: NEEDS_VERIFICATION
+  source_revision: NEEDS_VERIFICATION
+  source_paths:
+    - NEEDS_VERIFICATION
+  target_repository: NEEDS_VERIFICATION
+  target_paths:
+    - NEEDS_VERIFICATION
+  migration_strategy:
+    value: NEEDS_VERIFICATION
+    pattern_reference: RESEARCH_REPOSITORY_PATTERNS.md
+  artifact_selection:
+    scope: NEEDS_VERIFICATION
+    classification_reference: RESEARCH_REPOSITORY_PATTERNS.md
+    accepted_classifications:
+      - NEEDS_VERIFICATION
+    excluded_classifications:
+      - NEEDS_VERIFICATION
+  dependency_closure_status: NEEDS_VERIFICATION
+  privacy_review_status:
+    value: NEEDS_VERIFICATION
+    authority_reference: SAFETY_PRIVACY_GUARDRAILS.md
+  provenance_strategy: NEEDS_VERIFICATION
+  portability_changes_allowed:
+    value: NEEDS_VERIFICATION
+    boundary_reference: RESEARCH_REPOSITORY_PATTERNS.md
+  scientific_changes_allowed:
+    value: false
+    analytical_change_authorization: required-if-true
+  required_validation:
+    - NEEDS_VERIFICATION
+  expected_reference_results: NEEDS_VERIFICATION
+  allowed_paths:
+    - NEEDS_VERIFICATION
+  forbidden_paths:
+    - NEEDS_VERIFICATION
+  rollback_strategy: NEEDS_VERIFICATION
+  owner_approval_gates:
+    - NEEDS_VERIFICATION
+```
+
+`migration_strategy.value` records the project-approved strategy. This template does not choose a strategy or define strategy-selection logic. Strategy patterns belong to `RESEARCH_REPOSITORY_PATTERNS.md`.
+
+`privacy_review_status` records the project-specific review state under `SAFETY_PRIVACY_GUARDRAILS.md`. It must not redefine safety classifications or weaken fail-closed privacy handling.
+
+`required_validation` records the project-required validation set under `EVIDENCE_REVIEW_AND_ACCEPTANCE.md`. It must not redefine PASS/FAIL semantics.
+
+Migration permission does not authorize scientific or analytical change. If `scientific_changes_allowed.value` is anything other than `false`, the completed project specification must reference a separate approved analytical-change scope or work package. Analytical changes must not be hidden inside portability changes.
+
+Tool selection, history rewrite, network use, staging, commit, push, release, publication and external exposure remain governed by `TOOL_AND_AGENT_POLICY.md`, applicable safety guardrails and explicit Owner approval gates.
+
+## 11. Analysis and Output Fields
 
 When the project includes analysis work, the completed project specification must define:
 
@@ -155,7 +216,7 @@ When the project includes analysis work, the completed project specification mus
 
 The project specification must not alter manuscript conclusions or statistical interpretation unless the user explicitly authorizes that scope.
 
-## 11. Tool, Agent and Environment Fields
+## 12. Tool, Agent and Environment Fields
 
 The completed project specification must define project-specific tool, agent and environment constraints only where stricter or more specific than the general policy.
 
@@ -172,7 +233,7 @@ Required fields:
 
 `TOOL_AND_AGENT_POLICY.md` remains the tool and agent authority. The project specification may not infer permission from tool availability.
 
-## 12. Evidence and Acceptance Fields
+## 13. Evidence and Acceptance Fields
 
 The completed project specification must define project-specific evidence and acceptance requirements:
 
@@ -188,7 +249,7 @@ The completed project specification must define project-specific evidence and ac
 
 `EVIDENCE_REVIEW_AND_ACCEPTANCE.md` remains the evidence and acceptance authority. Project-specific criteria may strengthen but must not weaken it.
 
-## 13. Activation and Deactivation Fields
+## 14. Activation and Deactivation Fields
 
 The completed project specification must define:
 
@@ -202,7 +263,7 @@ The completed project specification must define:
 
 Activation uncertainty must stop Project Mode use for the affected scope and be marked `NEEDS_VERIFICATION`.
 
-## 14. Project Specification Skeleton
+## 15. Project Specification Skeleton
 
 The following skeleton may be copied when drafting a completed project specification:
 
@@ -221,22 +282,24 @@ The following skeleton may be copied when drafting a completed project specifica
 
 ## 6. Repository and Artifact Boundaries
 
-## 7. Analysis and Output Requirements
+## 7. Migration Contract
 
-## 8. Tool, Agent and Environment Constraints
+## 8. Analysis and Output Requirements
 
-## 9. Evidence, Review and Acceptance Requirements
+## 9. Tool, Agent and Environment Constraints
 
-## 10. Activation, Suspension and Retirement
+## 10. Evidence, Review and Acceptance Requirements
 
-## 11. Open `NEEDS_VERIFICATION` Items
+## 11. Activation, Suspension and Retirement
 
-## 12. Dependencies and References
+## 12. Open `NEEDS_VERIFICATION` Items
+
+## 13. Dependencies and References
 ```
 
 The skeleton is structure only. It is not approved project content until completed, reviewed and accepted.
 
-## 15. Exclusions
+## 16. Exclusions
 
 This template must not contain:
 
@@ -251,9 +314,10 @@ This template must not contain:
 - duplicated tool or command policy;
 - duplicated evidence acceptance procedure;
 - repository architecture pattern guidance;
+- project-specific migration source, revision, path or strategy values;
 - Knowledge lifecycle governance.
 
-## 16. Review and Validation Rules
+## 17. Review and Validation Rules
 
 Before approving a completed project specification, review must verify:
 
@@ -263,13 +327,16 @@ Before approving a completed project specification, review must verify:
 - safety and privacy constraints are compatible with `SAFETY_PRIVACY_GUARDRAILS.md`;
 - tool and agent constraints are compatible with `TOOL_AND_AGENT_POLICY.md`;
 - evidence and acceptance constraints are compatible with `EVIDENCE_REVIEW_AND_ACCEPTANCE.md`;
+- migration contract fields are present when source-to-target migration is in scope;
+- migration contract choices are compatible with `RESEARCH_REPOSITORY_PATTERNS.md`;
+- migration permission does not silently authorize scientific or analytical changes;
 - activation rules are explicit;
 - unresolved items are classified and bounded;
 - no project or session state is present in this template document.
 
 Validation must be appropriate to the completed specification and must include structural, metadata, dependency and contradiction review.
 
-## 17. Dependencies and References
+## 18. Dependencies and References
 
 Typed dependency relationships:
 
@@ -289,6 +356,9 @@ TOOL_AND_AGENT_POLICY.md
 
 EVIDENCE_REVIEW_AND_ACCEPTANCE.md
   constrains -> completed project specifications for evidence, review and acceptance requirements
+
+RESEARCH_REPOSITORY_PATTERNS.md
+  informs -> completed project specifications for repository architecture and migration-pattern choices
 ```
 
 References:
@@ -297,10 +367,11 @@ References:
 - `SAFETY_PRIVACY_GUARDRAILS.md` is the safety, privacy and protected-data authority.
 - `TOOL_AND_AGENT_POLICY.md` is the tool, command and agent-boundary authority.
 - `EVIDENCE_REVIEW_AND_ACCEPTANCE.md` is the evidence review and acceptance authority.
+- `RESEARCH_REPOSITORY_PATTERNS.md` owns repository architecture and migration-pattern guidance.
 
 The future `PROJECT_SPECIFICATION.md` is a project instance document, not part of this permanent Knowledge inventory unless separately approved.
 
-## 18. Validation Checklist
+## 19. Validation Checklist
 
 - [ ] Exactly one primary responsibility.
 - [ ] Complete canonical metadata.
@@ -315,11 +386,18 @@ The future `PROJECT_SPECIFICATION.md` is a project instance document, not part o
 - [ ] Required scope fields are defined.
 - [ ] Required data and privacy fields are defined without duplicating safety classifications.
 - [ ] Required repository and artifact fields are defined without prescribing architecture patterns.
+- [ ] Required migration contract fields are defined without duplicating migration patterns.
+- [ ] Migration strategy is a project-specific value with a repository-pattern reference.
+- [ ] Migration privacy review status references Guardrails without redefining privacy classifications.
+- [ ] Migration validation references Evidence Policy without redefining PASS/FAIL semantics.
+- [ ] Migration contract does not authorize scientific or analytical changes by default.
 - [ ] Required analysis and output fields are defined without adding project-specific conclusions.
 - [ ] Required tool, agent and environment fields are defined without duplicating tool policy.
 - [ ] Required evidence and acceptance fields are defined without duplicating acceptance procedure.
 - [ ] Activation and deactivation fields are explicit.
 - [ ] No active project content.
+- [ ] No A1 or FOF project values.
+- [ ] No project-specific repository URLs, commit SHAs, paths or selected migration strategy.
 - [ ] No project or session state.
 - [ ] No local absolute paths.
 - [ ] No secrets or participant data.
