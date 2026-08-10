@@ -100,7 +100,7 @@ All registry entries initially use `lifecycle_status: proposed` and `document_ev
 | `KNOWLEDGE_GOVERNANCE.md` | P1 | policy | Define Knowledge maintenance and lifecycle governance | `task-conditional` | Load for Knowledge maintenance or lifecycle decisions | `KB_INDEX.md`, `EVIDENCE_REVIEW_AND_ACCEPTANCE.md`, `SAFETY_PRIVACY_GUARDRAILS.md`, `TOOL_AND_AGENT_POLICY.md` | `binding-policy` | `approved` | `validated` | `FARO1 Knowledge Steward` | `User / designated project owner` |
 | `PROJECT_CONTEXT_TEMPLATE.md` | P1 | template | Define its own project-context template structure | `template-only` | Load only when its template structure is needed | `KB_INDEX.md`, `PROJECT_SPECIFICATION_TEMPLATE.md`, `SAFETY_PRIVACY_GUARDRAILS.md`, `TOOL_AND_AGENT_POLICY.md`, `EVIDENCE_REVIEW_AND_ACCEPTANCE.md`, `RESEARCH_REPOSITORY_PATTERNS.md` | `template` | `approved` | `validated` | `FARO1 Knowledge Steward` | `User / designated project owner` |
 | `RESEARCH_REPOSITORY_PATTERNS.md` | P1 | reference | Provide repository architecture patterns | `task-conditional` | Load for repository design questions | `KB_INDEX.md`, `PROJECT_CONTEXT_TEMPLATE.md`, `PROJECT_SPECIFICATION_TEMPLATE.md`, `SAFETY_PRIVACY_GUARDRAILS.md`, `TOOL_AND_AGENT_POLICY.md`, `EVIDENCE_REVIEW_AND_ACCEPTANCE.md` | `reference` | `approved` | `validated` | `FARO1 Knowledge Steward` | `User / designated project owner` |
-| `DECISION_LOG_TEMPLATE.md` | P2 | template | Define the structure of later decision records | `template-only` | Load only when a decision record is drafted | `KB_INDEX.md` | `template` | `proposed` | `unverified` | `FARO1 Knowledge Steward` | `User / designated project owner` |
+| `DECISION_LOG_TEMPLATE.md` | P2 | template | Define the structure of later decision records | `template-only` | Load only when drafting, reviewing or validating decision-record structure | `KB_INDEX.md`, `SAFETY_PRIVACY_GUARDRAILS.md`, `TOOL_AND_AGENT_POLICY.md`, `EVIDENCE_REVIEW_AND_ACCEPTANCE.md`, `KNOWLEDGE_GOVERNANCE.md` | `template` | `approved` | `validated` | `FARO1 Knowledge Steward` | `User / designated project owner` |
 
 ## 7. Routing Policy
 
@@ -216,6 +216,21 @@ PROJECT_SPECIFICATION.md
 
 TOOL_AND_AGENT_POLICY.md
   conditionally-loads -> tool- or agent-specific execution context
+
+DECISION_LOG_TEMPLATE.md
+  structures -> later completed decision records
+
+SAFETY_PRIVACY_GUARDRAILS.md
+  constrains -> completed decision records that affect data, privacy, protected data, secrets, public exposure, release or publication
+
+TOOL_AND_AGENT_POLICY.md
+  constrains -> completed decision records that affect tools, commands, agents, network use, Git or external actions
+
+EVIDENCE_REVIEW_AND_ACCEPTANCE.md
+  constrains -> completed decision records for evidence, review, validation, acceptance and Owner approval gates
+
+KNOWLEDGE_GOVERNANCE.md
+  constrains -> completed decision records for Knowledge lifecycle, registry alignment, deprecation, retirement, supersession and migration decisions
 ```
 
 `PROJECT_SPECIFICATION.md` is a later named runtime document, not a permanent inventory entry. Its storage location is `NEEDS_VERIFICATION`. No unnamed future instance document is introduced. The graph contains no circular normative dependency.
