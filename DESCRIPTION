@@ -8,6 +8,18 @@ License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Imports:
+    dplyr,
+    here,
+    lme4,
+    lmerTest,
+    readr,
+    readxl,
+    tibble,
+    tidyr
 Suggests:
+    broom.mixed,
+    digest,
+    knitr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

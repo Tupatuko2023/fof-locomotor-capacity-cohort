@@ -37,8 +37,8 @@ init_paths <- function(script_label) {
   # script_label example: "K11" (canonical folder name)
 
   # Ensure we are at project root or know where it is via 'here'
-  outputs_dir   <- here::here("R-scripts", script_label, "outputs")
-  manifest_path <- here::here("manifest", "manifest.csv")
+  outputs_dir   <- here::here("outputs", "tables", script_label)
+  manifest_path <- here::here("outputs", "logs", paste0(script_label, "_manifest.csv"))
 
   # Create directories if missing
   dir.create(outputs_dir, recursive = TRUE, showWarnings = FALSE)

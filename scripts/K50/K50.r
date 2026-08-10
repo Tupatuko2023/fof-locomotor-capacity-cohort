@@ -25,8 +25,8 @@
 #
 # Outputs + manifest:
 # - script_label: K50 (canonical)
-# - outputs dir: R-scripts/K50/outputs/  (resolved via init_paths(script_label))
-# - manifest: append 1 row per artifact to manifest/manifest.csv
+# - outputs dir: outputs/tables/K50/  (resolved via init_paths(script_label))
+# - manifest: append 1 row per artifact to outputs/logs/K50_manifest.csv
 #
 # Workflow (tick off; do not skip):
 # 01) Init paths + options + dirs (init_paths)
@@ -37,7 +37,7 @@
 # 06) Fit primary model for selected branch
 # 07) Fit z3 fallback / sensitivity model where contract requires it
 # 08) Fit FI22 sensitivity only when explicitly enabled
-# 09) Save aggregate artifacts -> R-scripts/K50/outputs/
+# 09) Save aggregate artifacts -> outputs/tables/K50/
 # 10) Append manifest row per artifact
 # 11) Save sessionInfo to manifest/
 # 12) EOF marker

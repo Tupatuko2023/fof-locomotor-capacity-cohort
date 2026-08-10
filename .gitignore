@@ -26,5 +26,6 @@ renv/staging/
 # Allow explicitly
 !data/README.md
 !data/synthetic/
+!data/synthetic/k50_synthetic_dedup_lookup_root/paper_02/KAAOS_data_sotullinen.xlsx
 !outputs/tables/.gitkeep
 !outputs/figures/.gitkeep
