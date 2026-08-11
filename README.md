@@ -42,8 +42,57 @@ fof-locomotor-capacity-cohort/
 ```
 
 ## Ympäristön palauttaminen ja riippuvuudet
-Projekti käyttää `renv`-pakettia (asennetaan myöhemmin). Tällä hetkellä riippuvuudet ja ympäristö ovat vain luonnoksena.
-Kun renv on käytössä, voit palauttaa ympäristön: `renv::restore()`.
+Projektin riippuvuuksien auktoriteetti on `DESCRIPTION`. Projektissa ei ole
+aktiivista `renv`-ympäristöä eikä target-kohtaista `renv.lock`-tiedostoa.
+
+R-testit toimivat natiivissa Termux-ympäristössä. Quarto-renderöinti suoritetaan
+Ubuntu PRoot -ympäristössä, jotta Quarto, R ja niiden kirjastot käyttävät samaa
+glibc-runtimea. Smoke-renderöinnissä validoidussa ympäristössä oli R 4.5.2 ja
+Quarto 1.9.38 ARM64-alustalla. Koko R-testiketju edellyttää, että kaikki
+`DESCRIPTION`-riippuvuudet on ensin asennettu samaan PRoot-ympäristöön.
+
+Käynnistä Ubuntu PRoot ja rajaa ympäristö GNU/Linux-polkuihin:
+
+```bash
+proot-distro login --shared-home ubuntu -- \
+  env -u PREFIX -u LD_PRELOAD -u LD_LIBRARY_PATH \
+  PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+  /bin/bash --noprofile --norc
+```
+
+CRAN toimittaa tämän ympäristön paketit lähdekoodina. PRootissa pitää siksi olla
+R-lähdepakettien kääntämiseen soveltuva toolchain (`make`, C/C++- ja
+Fortran-kääntäjät sekä CMake). Ubuntussa tarvittavan perustan tarjoavat
+`r-base-dev` ja `cmake`. Järjestelmäpakettien asentaminen muuttaa PRootia ja
+vaatii erillisen ympäristökohtaisen hyväksynnän.
+
+Asenna hyväksytyt build-prerequisitet Ubuntu PRootissa:
+
+```bash
+apt-get update
+apt-get install --no-install-recommends r-base-dev cmake
+```
+
+Kun build-prerequisitet ovat saatavilla, siirry repositoryn juureen ja asenna
+`DESCRIPTION`issa ilmoitetut runtime-, testi- ja renderöintiriippuvuudet
+hyväksytystä CRAN-lähteestä:
+
+```bash
+Rscript -e 'install.packages(c(
+  "dplyr", "here", "lme4", "lmerTest", "readr", "readxl", "tibble", "tidyr",
+  "broom.mixed", "digest", "knitr", "rmarkdown", "testthat"
+), repos = "https://cloud.r-project.org")'
+```
+
+R käyttää jo asennettuja paketteja uudelleen ja asentaa lisäksi tarvittavat
+transitiiviset riippuvuudet. `rmarkdown` kuuluu renderöinnin
+`Suggests`-riippuvuuksiin ja sen pitää olla saatavilla ennen
+Quarto-validointia.
+
+Ympäristö ei lukitse pakettiversioita. Tämä menettely tukee julkisen ja
+synteettisen scaffoldin rakenne-, testi- ja renderöintitoistettavuutta, mutta
+ei osoita numeerista tai tieteellistä pariteettia eikä oikean tutkimusaineiston
+toistettavuutta.
 
 ## Synteettisen testin ja testien ajaminen
 Koska kyseessä on synteettinen data, testien ja koodin ajoa varten käytetään synteettistä aineistoa, jolla voidaan varmistaa koodin tekninen toimivuus.
@@ -53,14 +102,20 @@ Voit generoida synteettisen datan uudelleen ajamalla:
 source("scripts/01_generate_synthetic_fixture.R")
 ```
 
-Suorita R-testit (esim. transform-funktiolle):
-```R
-testthat::test_dir("tests/testthat")
+Suorita R-testit repositoryn juuresta:
+```bash
+Rscript tests/testthat.R
+```
+
+Suorita K50:n kohdennettu synteettinen testisarja:
+```bash
+Rscript -e 'testthat::test_file("tests/testthat/test_k50_synthetic_wide_test_control.R")'
 ```
 
 ## Quarto-renderöinti
 Renderöi smoke test varmistaaksesi putken toiminnan:
 ```bash
+quarto check
 quarto render manuscript/smoke_test.qmd
 ```
 
