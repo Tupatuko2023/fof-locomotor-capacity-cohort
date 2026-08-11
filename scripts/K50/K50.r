@@ -98,6 +98,16 @@ get_arg <- function(flag, default = NULL) {
   args[[idx + 1]]
 }
 
+has_flag <- function(flag) {
+  args <- commandArgs(trailingOnly = TRUE)
+  idx <- match(flag, args)
+  if (is.na(idx)) return(FALSE)
+  if (idx < length(args) && !startsWith(args[[idx + 1]], "--")) {
+    stop(flag, " does not accept a value or path.", call. = FALSE)
+  }
+  TRUE
+}
+
 parse_toggle <- function(x, flag) {
   val <- tolower(trimws(ifelse(is.null(x), "", as.character(x))))
   if (!nzchar(val)) return(FALSE)
@@ -161,8 +171,10 @@ compute_sha256 <- function(path) {
   stop("K50 could not compute SHA-256 for input path: ", path, call. = FALSE)
 }
 
-resolve_authoritative_wide_input <- function() {
-  lock_path <- here::here("R-scripts", "K50", "k50_wide_authoritative_input.lock")
+resolve_authoritative_wide_input <- function(
+  lock_path = here::here("R-scripts", "K50", "k50_wide_authoritative_input.lock"),
+  resolution = "authoritative_lock"
+) {
   if (!file.exists(lock_path)) {
     stop("K50 WIDE authoritative input lock is missing: ", lock_path, call. = FALSE)
   }
@@ -201,7 +213,7 @@ resolve_authoritative_wide_input <- function() {
   }
   list(
     path = resolved_path,
-    resolution = "authoritative_lock",
+    resolution = resolution,
     lock_path = normalizePath(lock_path, winslash = "/", mustWork = TRUE),
     snapshot_role = lock$snapshot_role,
     snapshot_id = lock$snapshot_id,
@@ -212,7 +224,53 @@ resolve_authoritative_wide_input <- function() {
   )
 }
 
-resolve_input_path <- function(shape, cli_data) {
+resolve_synthetic_wide_test_control_input <- function() {
+  synthetic_lock_path <- here::here("data", "synthetic", "k50_wide_authoritative_test_control.lock")
+  expected_input_path <- normalizePath(
+    here::here("data", "synthetic", "k50_wide_structural_fixture.csv"),
+    winslash = "/",
+    mustWork = FALSE
+  )
+  data_ref <- resolve_authoritative_wide_input(
+    lock_path = synthetic_lock_path,
+    resolution = "synthetic_wide_test_control"
+  )
+  if (!identical(data_ref$snapshot_role, "synthetic_wide_test_control")) {
+    stop(
+      "K50 synthetic WIDE test-control lock has invalid snapshot_role: ",
+      data_ref$snapshot_role,
+      call. = FALSE
+    )
+  }
+  if (!startsWith(data_ref$snapshot_id, "SYN-K50-WIDE-")) {
+    stop(
+      "K50 synthetic WIDE test-control lock has invalid snapshot_id: ",
+      data_ref$snapshot_id,
+      call. = FALSE
+    )
+  }
+  if (!identical(data_ref$path, expected_input_path)) {
+    stop(
+      "K50 synthetic WIDE test-control lock is not bound to the approved fixture path.\n",
+      "Expected: ", expected_input_path, "\n",
+      "Actual: ", data_ref$path,
+      call. = FALSE
+    )
+  }
+  data_ref
+}
+
+resolve_input_path <- function(shape, cli_data, synthetic_wide_test_control = FALSE) {
+  if (synthetic_wide_test_control && !identical(shape, "WIDE")) {
+    stop("K50 --synthetic-wide-test-control is only valid with --shape WIDE.", call. = FALSE)
+  }
+  if (synthetic_wide_test_control && !is.null(cli_data) && nzchar(cli_data)) {
+    stop("K50 --data cannot be combined with --synthetic-wide-test-control.", call. = FALSE)
+  }
+  if (synthetic_wide_test_control) {
+    return(resolve_synthetic_wide_test_control_input())
+  }
+
   if (!is.null(cli_data) && nzchar(cli_data)) {
     if (!file.exists(cli_data)) {
       stop("K50 --data file not found: ", cli_data, call. = FALSE)
@@ -410,7 +468,8 @@ shape <- parse_shape(get_arg("--shape"))
 outcome <- parse_outcome(get_arg("--outcome", "locomotor_capacity"))
 fi22_enabled <- parse_toggle(get_arg("--fi22", "off"), "--fi22")
 allow_composite_z <- identical(toupper(get_arg("--allow-composite-z", "off")), "VERIFIED")
-data_ref <- resolve_input_path(shape, get_arg("--data"))
+synthetic_wide_test_control <- has_flag("--synthetic-wide-test-control")
+data_ref <- resolve_input_path(shape, get_arg("--data"), synthetic_wide_test_control)
 data_path <- data_ref$path
 
 if (identical(outcome, "Composite_Z") && !allow_composite_z) {
