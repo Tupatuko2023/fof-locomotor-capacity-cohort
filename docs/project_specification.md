@@ -396,6 +396,65 @@ analytical changes, staging, commit, push, pull request, release, publication or
 any Git Hard Gate action. Runtime-generated outputs and manifest CSV remain
 `REGENERATE_OR_REFERENCE`.
 
+### Owner K50 WIDE Synthetic Test-Control Decision
+
+OWNER DECISION - A1 K50 WIDE SYNTHETIC AUTHORITATIVE TEST CONTROL
+
+```yaml
+decision: APPROVE
+project: fof-locomotor-capacity-cohort / A1
+decision_date: 2026-08-10
+scope: >
+  Approve creation and use of a synthetic K50 WIDE fixture and a synthetic
+  authoritative-test-control solely for public/synthetic structural validation
+  of the existing WIDE authoritative-input mechanism.
+approved_synthetic_scope:
+  initial_shape: WIDE
+  initial_outcome: locomotor_capacity
+  fixture_role: synthetic structural placeholder input only
+  test_control_role: synthetic structural test authority only
+approved_synthetic_paths:
+  - data/synthetic/k50_wide_structural_fixture.csv
+  - data/synthetic/k50_wide_authoritative_test_control.lock
+required_test_control_semantics:
+  - explicit input-path binding
+  - file-existence verification
+  - MD5 verification
+  - SHA-256 verification
+  - snapshot_role metadata
+  - snapshot_id metadata
+  - optional rows_loaded_expected metadata
+  - optional selection_reason metadata
+synthetic_production_boundary:
+  synthetic_authority_is_production_authority: false
+  production_wide_lock_replacement_authorized: false
+  real_wide_input_access_authorized: false
+  protected_DATA_ROOT_access_authorized: false
+  data_override_lock_bypass_authorized: false
+  scientific_or_analytical_validation_authorized: false
+lock_path_authority:
+  recommended_model: target-specific synthetic test-control path
+  legacy_production_lock_path_for_synthetic_authority: not approved
+  later_code_change_classification: >
+    NON_SEMANTIC_PORTABILITY only if all production integrity and authority
+    semantics remain unchanged and synthetic/production authority cannot be
+    confused.
+git_hard_gate_action_authorized: false
+next_authorized_step: WP-A1-K50-WIDE-SYNTHETIC-AUTHORITY-ALIGNMENT
+```
+
+This synthetic test-control approval does not authorize fixture creation in this
+Specification alignment Work Package, WIDE execution, production authoritative
+lock creation or replacement, protected-data access, use of `--data` to bypass
+the WIDE lock for lock-preserving validation, weakening of MD5/SHA-256/path
+checks, scientific derivation validation, FI22 interpretation, `z3` or
+`Composite_Z` validation, analytical/scientific parity, numerical reproduction,
+staging, commit, push, pull request, release or publication.
+
+Any later implementation that changes production lock meaning, validation rules,
+parser semantics or production authority is an `AUTHORITATIVE_CONTROL_CHANGE` /
+MaterialBoundaryChange and requires separate Owner approval.
+
 ```yaml
 migration_contract:
   migration_required: yes
@@ -468,9 +527,12 @@ migration_contract:
     generatable_upstream_dependencies:
       - K50 downstream generated tables, figures, diagnostics and receipts
       - generated manifest records where needed for provenance
+      - synthetic K50 WIDE fixture for structural validation only
+      - synthetic K50 WIDE authoritative-test-control preserving existing lock integrity checks
     external_or_restricted_inputs:
       - data/external/KaatumisenPelko.csv
       - ${DATA_ROOT}/paper_02/KAAOS_data.xlsx
+      - production K50 WIDE authoritative input and production lock authority
       - raw enrichment workbooks or equivalent restricted inputs used by K51/K52/K53
     remaining_needs_verification:
       - exact final A1 execution entrypoints
@@ -479,6 +541,8 @@ migration_contract:
       - K51 override/linkage CSV sensitivity and disposition
       - generated/model-frame artifact handling
       - final execution allowlist and target mapping for approved K50-core files
+      - production WIDE authoritative lock/input authority
+      - protected-environment WIDE validation
   privacy_review_status:
     value: PASS WITH DEFECTS
     authority_reference: SAFETY_PRIVACY_GUARDRAILS.md
@@ -512,8 +576,15 @@ migration_contract:
     non_requirements:
       - commit signing is not recorded as a universal provenance requirement
   portability_changes_allowed:
-    value: NEEDS_VERIFICATION
+    value: limited
     boundary_reference: RESEARCH_REPOSITORY_PATTERNS.md
+    approved_limited_scope:
+      - target-specific synthetic WIDE test-control path selection may be implemented later only if classified NON_SEMANTIC_PORTABILITY
+      - production lock semantics, integrity checks and authority must remain unchanged
+    still_needs_verification:
+      - production WIDE lock path or authority changes
+      - parser-semantic changes
+      - protected-environment execution paths
   scientific_changes_allowed:
     value: false
     analytical_change_authorization: required-if-true
@@ -528,7 +599,9 @@ migration_contract:
     - scientific/analytical parity validation before any reproduction claim
   expected_reference_results: NEEDS_VERIFICATION
   allowed_paths:
-    - NEEDS_VERIFICATION
+    - data/synthetic/k50_wide_structural_fixture.csv for approved synthetic WIDE structural validation only
+    - data/synthetic/k50_wide_authoritative_test_control.lock for approved synthetic WIDE test-control only
+    - NEEDS_VERIFICATION for production WIDE input, production lock authority and protected execution paths
   forbidden_paths:
     - data/raw/
     - data/restricted/
@@ -540,6 +613,8 @@ migration_contract:
     - source-repository inspection
     - migration strategy selection
     - migration execution
+    - synthetic WIDE fixture and authoritative-test-control implementation
+    - any production WIDE lock or parser-semantic change
     - protected-data access
     - staging
     - commit
@@ -568,7 +643,14 @@ analysis_output_requirements:
     and model specifications remain NEEDS_VERIFICATION.
   approved_analysis_inputs:
     - data/synthetic/synthetic_fixture.csv for structural validation only
+    - data/synthetic/k50_wide_structural_fixture.csv for approved synthetic WIDE structural validation only
+    - data/synthetic/k50_wide_authoritative_test_control.lock for approved synthetic WIDE test-control only
   synthetic_fixture_policy: synthetic fixtures support structural and test validation only
+  synthetic_wide_test_control_policy: >
+    Synthetic WIDE test-control may exercise production-style path binding,
+    file-existence, MD5, SHA-256 and snapshot metadata checks for structural
+    validation only. It is not production authority and does not validate real
+    WIDE input, outcome derivations or scientific parity.
   expected_tables_figures_reports_or_supplementary_outputs: NEEDS_VERIFICATION
   provenance_requirements_for_generated_outputs: required before acceptance or publication
   traceability_requirement_between_analysis_code_and_public_outputs: required when outputs are created
@@ -764,6 +846,8 @@ can be used for migration approval or execution.
 - Blocker-specific privacy/provenance resolution after PASS WITH DEFECTS.
 - Authorship/rights review and formal legacy/superseded disposition.
 - Approved execution `allowed_paths`.
+- Production WIDE authoritative lock/input authority.
+- Protected-environment WIDE validation.
 - Approved protected analysis environment.
 - Quarto availability in intended validation environment.
 - `renv` activation and dependency-lock status.
