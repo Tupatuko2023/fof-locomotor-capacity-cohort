@@ -14,8 +14,10 @@ credentials/
 *.xlsx
 *.xls
 outputs/logs/
+outputs/demo/
 manuscript/_freeze/
 manuscript/.quarto/
+/.quarto/
 *.Rproj.user
 *.Ruserdata
 .Ruserdata

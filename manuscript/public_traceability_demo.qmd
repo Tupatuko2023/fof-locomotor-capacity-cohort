@@ -1,0 +1,74 @@
+---
+title: "Public Synthetic Traceability Demonstration"
+format:
+  html:
+    embed-resources: true
+    toc: true
+execute:
+  echo: false
+---
+
+# SYNTHETIC WORKFLOW DEMONSTRATION — NOT A RESEARCH RESULT
+
+This page is software/workflow and structural reproducibility evidence. It is
+not a research result, scientific estimate, parity result, protected-data
+validation, or evidence that participant-level analyses were reproduced.
+
+```{r}
+output_root <- Sys.getenv("TRACE_OUTPUT_ROOT", unset = "")
+if (!nzchar(output_root)) stop("TRACE_OUTPUT_ROOT is required")
+qc_path <- file.path(output_root, "traceability_qc.csv")
+figure_path <- file.path(output_root, "traceability_qc.png")
+receipt_path <- file.path(output_root, "traceability_receipt.json")
+qc <- utils::read.csv(
+  qc_path, stringsAsFactors = FALSE, check.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+receipt <- readLines(receipt_path, warn = FALSE)
+receipt_value <- function(field) {
+  line <- grep(paste0('"', field, '"'), receipt, value = TRUE, fixed = TRUE)
+  sub('.*: "([^"]*)".*', '\\1', line[[1]])
+}
+```
+
+## Traceability chain
+
+Approved synthetic input → structural QC invocation → machine-readable QC
+table → QC figure → this Quarto report → provenance receipt.
+
+- Repository revision: `r receipt_value("repository_revision")`
+- Synthetic snapshot: `r receipt_value("synthetic_snapshot_id")`
+- Snapshot role: `r receipt_value("synthetic_snapshot_role")`
+- Generation status: `r receipt_value("generation_status")`
+
+## Structural QC table
+
+```{r}
+knitr::kable(qc, caption = "Synthetic structural and integrity checks")
+```
+
+## Structural QC figure
+
+```{r}
+#| results: asis
+row_y <- seq(80, by = 45, length.out = nrow(qc))
+bars <- paste(vapply(seq_len(nrow(qc)), function(index) {
+  color <- if (qc$status[[index]] == "PASS") "#2E7D32" else "#B71C1C"
+  paste0(
+    '<text x="10" y="', row_y[[index]] + 20, '" font-size="14">', qc$check_id[[index]], '</text>',
+    '<rect x="230" y="', row_y[[index]], '" width="300" height="30" fill="', color, '" />',
+    '<text x="540" y="', row_y[[index]] + 20, '" font-size="14">', qc$status[[index]], '</text>'
+  )
+}, character(1)), collapse = "")
+cat(
+  '<svg role="img" aria-label="Synthetic workflow structural QC checklist; every bar represents the PASS or FAIL state of a non-scientific integrity or schema check." ',
+  'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 340">',
+  '<text x="10" y="30" font-size="16" font-weight="bold">SYNTHETIC WORKFLOW DEMONSTRATION — NOT A RESEARCH RESULT</text>',
+  bars,
+  '</svg>',
+  sep = ""
+)
+```
+
+The displayed values describe only the operation of this public synthetic
+workflow. They must not be interpreted as observed cohort findings.
