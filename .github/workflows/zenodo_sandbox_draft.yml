@@ -1,0 +1,66 @@
+name: Zenodo Sandbox draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: CREATE or UPDATE (draft only)
+        required: true
+        type: choice
+        options: [UPDATE, CREATE]
+      create_confirmation:
+        description: Owner-approved CREATE requires exactly CREATE_SANDBOX_DRAFT
+        required: false
+        type: string
+      draft_id:
+        description: Existing unpublished Sandbox deposition ID for UPDATE
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fof-locomotor-capacity-cohort-zenodo-sandbox
+  cancel-in-progress: false
+
+jobs:
+  sandbox-draft:
+    environment: zenodo-sandbox
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install CFF parser
+        run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Build and verify explicit public bundle
+        run: python scripts/zenodo/build_cohort_bundle.py --output-dir "$RUNNER_TEMP/cohort-bundle"
+      - name: Prepare Sandbox metadata
+        run: python scripts/zenodo/map_cff_to_zenodo.py --output "$RUNNER_TEMP/zenodo-metadata.json"
+      - name: Create or update unpublished Sandbox draft
+        env:
+          ZENODO_SANDBOX_TOKEN: ${{ secrets.ZENODO_SANDBOX_TOKEN }}
+          ZENODO_MODE: ${{ inputs.mode }}
+          ZENODO_CREATE_CONFIRMATION: ${{ inputs.create_confirmation }}
+          ZENODO_DRAFT_ID: ${{ inputs.draft_id }}
+          GITHUB_SOURCE_SHA: ${{ github.sha }}
+          GITHUB_WORKFLOW_RUN_ID: ${{ github.run_id }}
+        run: |
+          python scripts/zenodo/zenodo_sandbox_draft.py \
+            --mode "$ZENODO_MODE" \
+            --create-confirmation "$ZENODO_CREATE_CONFIRMATION" \
+            --draft-id "$ZENODO_DRAFT_ID" \
+            --metadata "$RUNNER_TEMP/zenodo-metadata.json" \
+            --bundle "$RUNNER_TEMP/cohort-bundle/fof-locomotor-capacity-cohort-0.1.0.zip" \
+            --attestation "$RUNNER_TEMP/zenodo-sandbox-attestation.json" \
+            --source-sha "$GITHUB_SOURCE_SHA" \
+            --workflow-run-id "$GITHUB_WORKFLOW_RUN_ID"
+      - name: Upload redacted draft attestation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zenodo-sandbox-draft-attestation
+          path: ${{ runner.temp }}/zenodo-sandbox-attestation.json
+          if-no-files-found: error
