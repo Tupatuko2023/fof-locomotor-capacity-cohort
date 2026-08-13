@@ -1,7 +1,24 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
-authors:
-  - family-names: "TBD"
+message: "If you use this software, please cite it using this metadata."
+type: software
 title: "fof-locomotor-capacity-cohort"
-version: 0.1.0.9000
-# DOI omitted until first Zenodo release
+abstract: >-
+  Public research software and reproducibility materials for a 12-month cohort
+  study of fear of falling and locomotor capacity in older adults. The public
+  repository contains synthetic fixtures and structural workflow evidence; it
+  does not distribute protected participant-level data or protected analytical
+  results.
+authors:
+  - family-names: "Korpi"
+    given-names: "Tomi"
+    affiliation: "University of Helsinki, Faculty of Medicine, Doctoral Programme in Clinical Research (CLINDOC)"
+    orcid: "https://orcid.org/0009-0003-0217-8291"
+version: 0.1.0
+repository-code: "https://github.com/Tupatuko2023/fof-locomotor-capacity-cohort"
+license: MIT
+keywords:
+  - fear of falling
+  - locomotor capacity
+  - reproducibility
+  - synthetic data
+  - research software

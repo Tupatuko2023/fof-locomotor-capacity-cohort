@@ -1,11 +1,31 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable public software changes are documented in this file.
 
-## [0.1.0.9000]
+## [Unreleased]
+
+### Changed
+
+- Prepared English publication-facing metadata for the planned `v0.1.0`
+  archival software release.
+- Reconciled repository scope, validation instructions, citation metadata, and
+  the separation between software release and scientific-results publication.
+
+## [0.1.0] - release candidate
+
 ### Added
-- Initial safe MVP repository scaffold for fof-locomotor-capacity-cohort.
-- Synthetic data generation for testing.
-- Simple transform_locomotor_indicators.R function with testthat tests.
-- Quarto smoke test using synthetic data.
-- Foundational documentation including AGENTS.md, README.md, and restricted data policies.
+
+- Safe public research-software scaffold and wholly synthetic fixtures.
+- Migrated K50 analysis core with source and adaptation provenance.
+- Synthetic WIDE integrity control and structural tests.
+- A1/K50 scientific-phase closeout documentation with deferred scientific
+  items explicitly retained.
+- Public synthetic input-to-QC-to-figure-to-Quarto-to-provenance traceability
+  demonstration.
+- DESCRIPTION-based dependency documentation and Quarto smoke validation.
+
+### Security and privacy
+
+- Excluded participant-level data, protected analytical results, protected K50
+  runtime artifacts, local orchestration material, credentials, and regenerated
+  demo outputs from the public release scope.

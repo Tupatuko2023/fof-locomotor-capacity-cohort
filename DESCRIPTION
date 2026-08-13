@@ -1,10 +1,17 @@
 Package: foflocomotorcapacitycohort
 Title: FOF and Locomotor Capacity Cohort
-Version: 0.1.0.9000
+Version: 0.1.0
 Authors@R:
-    person("Pending", "Author", email = "pending@example.com", role = c("aut", "cre"))
-Description: Analysis code and reproducibility materials for a 12-month cohort study on fear of falling and locomotor capacity.
+    person("Tomi", "Korpi", email = "tomi.pt.korpi@helsinki.fi",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0003-0217-8291",
+                       affiliation = "University of Helsinki, Faculty of Medicine, Doctoral Programme in Clinical Research (CLINDOC)"))
+Description: Public research software and reproducibility materials for a
+    12-month cohort study of fear of falling and locomotor capacity in older
+    adults. Public validation uses synthetic fixtures and does not reproduce or
+    distribute protected participant-level analyses.
 License: file LICENSE
+URL: https://github.com/Tupatuko2023/fof-locomotor-capacity-cohort
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
