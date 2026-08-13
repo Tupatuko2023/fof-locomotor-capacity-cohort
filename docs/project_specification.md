@@ -5,7 +5,7 @@
 ```yaml
 title: A1 Project Specification
 document_id: A1-PROJECT-SPECIFICATION
-version: 0.1.0
+version: 0.2.0
 status: accepted
 project_id: A1
 scope: >
@@ -17,7 +17,7 @@ review_authority: User / designated project owner
 effective_date: 2026-08-10
 review_date_or_cadence: NEEDS_VERIFICATION
 document_evidence_state: validated
-project_mode_status: active
+project_mode_status: active; A1/K50 scientific phase closed with deferred scientific items
 source_of_truth_state: partial; accepted target-repository context with unresolved source-repository and migration fields
 activation_rule: active by Owner decision recorded in this Specification; bounded initial scope only
 ```
@@ -840,6 +840,10 @@ can be used for migration approval or execution.
 
 ## 13. Open `NEEDS_VERIFICATION` Items
 
+For the current A1/K50 scientific-phase state, the closeout record in Section
+14 supersedes earlier planning-state wording in this section where the two
+conflict. Items outside that bounded closeout retain their recorded state.
+
 - Final artifact migration approval/disposition.
 - Migration execution readiness for approved K50-core strategy.
 - Unresolved dependency branches from dependency closure PASS WITH DEFECTS.
@@ -851,12 +855,82 @@ can be used for migration approval or execution.
 - Approved protected analysis environment.
 - Quarto availability in intended validation environment.
 - `renv` activation and dependency-lock status.
-- Chair-rise reverse-coding formula.
 - Publication target, output scope and disclosure review authority.
 - Project Specification review cadence.
 - Steward or maintaining role.
 
-## 14. Dependencies and References
+## 14. A1/K50 Scientific-Phase Closeout
+
+This is the active normative closeout record for the bounded A1/K50 scientific
+phase. It records Owner-approved decisions already reached; it does not add a
+new scientific decision, authorize execution, or promote deferred items.
+
+```yaml
+closeout_state: CLOSED_WITH_DEFERRED_SCIENTIFIC_ITEMS
+technical_execution_review: PASS
+protected_scientific_review: PASS_WITH_DEFERRED_SCIENTIFIC_ITEMS
+parity_objective:
+  id: PARITY-OBJECTIVE-01
+  decision: OPTION_A
+  meaning: structural parity plus protected scientific review
+approved_decisions:
+  SCI-STRUCT-01: approved with clarification
+  SCI-SEM-LC: approved
+  SCI-SEM-CHAIR: approved
+deferred_or_limited_items:
+  SCI-03C: NEEDS_VERIFICATION
+  SCI-SEM-COHORT: NEEDS_VERIFICATION
+  SCI-03D: IMPLEMENTATION_SAFEGUARD_ONLY
+  RET-01: POLICY_REFERENCE_REQUIRED
+inactive_under_option_a:
+  - SCI-REF
+  - SCI-TOL
+```
+
+The approved structural target is the K50 WIDE analysis contract with 12-month
+locomotor capacity (`lc12`) as outcome, baseline locomotor capacity (`lc0`) and
+the approved FOF/covariate structure. The contract includes `z3` coverage.
+FI22 remains sensitivity-only and `Composite_Z` is outside the active primary
+contract. `SCI-STRUCT-01` is approved with the clarification that this is
+structural and methodological conformity, not a numerical-parity decision.
+
+`SCI-SEM-LC` approves the recorded locomotor-capacity semantics.
+`SCI-SEM-CHAIR` approves upstream chair-rise handling: valid positive chair-rise
+times are sign-reversed for the score direction, while non-positive or invalid
+values are missing. Earlier statements that the chair-rise formula itself is
+unresolved are superseded for this bounded contract.
+
+The only defensible affirmative claim for this closeout is:
+
+> A1/K50 conforms structurally and methodologically to the currently
+> Owner-approved analysis contracts, with z3 coverage, final cohort semantics,
+> and scientific approval of the 0.40 producer threshold explicitly deferred.
+
+This closeout does **not** establish numerical parity, numerical reproduction,
+effect equivalence, full validation, clinical validity, publication approval,
+disclosure approval, data-egress approval, or retention approval. Under Option
+A, `SCI-REF` and `SCI-TOL` are inactive rather than failed or completed.
+
+The deferred scientific register remains active:
+
+- `SCI-03C`: the scientific approval of the 0.40 producer threshold remains
+  `NEEDS_VERIFICATION`.
+- `SCI-SEM-COHORT`: final cohort semantics remain `NEEDS_VERIFICATION` as a
+  scientific approval item; their implemented structure may be described only
+  within the bounded conformity claim above.
+- `SCI-03D`: recorded only as `IMPLEMENTATION_SAFEGUARD_ONLY`; it is not an
+  independent scientific approval.
+- `RET-01`: retention remains `POLICY_REFERENCE_REQUIRED`; this closeout does
+  not grant a retention or deletion decision.
+
+Historical migration provenance remains historical evidence and must not be
+rewritten as if the later closeout decision existed at migration time. This
+section supersedes older active planning statements only for the bounded A1/K50
+scientific-phase status. It creates no authority to rerun protected analysis,
+access participant-level data, publish, disclose, export, retain, delete,
+stage, commit, push, or release artifacts.
+
+## 15. Dependencies and References
 
 Typed dependency relationships:
 
@@ -883,4 +957,6 @@ RESEARCH_REPOSITORY_PATTERNS.md
   informs -> migration patterns without authorizing execution
 ```
 
-This Specification records bounded Project Mode activation. It does not approve source-repository inspection, migration, staging, commit, push, pull request, release or publication.
+This Specification records bounded Project Mode activation and the bounded
+A1/K50 scientific-phase closeout. It does not approve staging, commit, push,
+pull request, release, publication, disclosure, data egress, or retention.

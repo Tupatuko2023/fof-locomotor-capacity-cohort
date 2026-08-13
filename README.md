@@ -2,9 +2,23 @@
 Analysis code and reproducibility materials for a 12-month cohort study on fear of falling (FOF) and locomotor capacity in older adults. Includes R scripts, Quarto manuscript, and synthetic test data. No restricted patient data included.
 
 ## Tarkoitus
-Tämä on tutkimuskohtainen R- ja Quarto-pohjainen analyysirepositorio, jonka tarkoituksena on dokumentoida 12 kuukauden kohorttianalyysi. Repositorio tekee näkyväksi analyysien, taulukoiden, kuvioiden ja lisämateriaalien yhteydet toisiinsa. Tämä MVP (Minimum Viable Product) sisältää toistaiseksi vain turvallisen scaffold-rakenteen ja synteettistä testidataa. **Oikeaa analyysikoodia tai käsikirjoitusta ei ole vielä migroitu.**
+Tämä on tutkimuskohtainen R- ja Quarto-pohjainen analyysirepositorio, jonka tarkoituksena on dokumentoida 12 kuukauden kohorttianalyysi. Repositorio tekee näkyväksi analyysien, taulukoiden, kuvioiden ja lisämateriaalien yhteydet toisiinsa. MVP sisältää turvallisen scaffold-rakenteen, synteettistä testidataa ja migroidun K50-analyysiytimen. Oikeaa osallistujatason dataa ei säilytetä tässä repositoriossa.
 
-> **This repository currently contains only a reproducibility scaffold. No analytical results are included.**
+> **No protected participant-level data or protected analytical results are published in this repository.**
+
+## A1/K50:n nykytila
+
+A1/K50:n tieteellinen vaihe on suljettu tilassa
+`CLOSED_WITH_DEFERRED_SCIENTIFIC_ITEMS`. Normatiivinen päätös- ja
+rajausrekisteri on [docs/project_specification.md](docs/project_specification.md#14-a1k50-scientific-phase-closeout).
+
+Puolustettavissa oleva väite on: “A1/K50 conforms structurally and
+methodologically to the currently Owner-approved analysis contracts, with z3
+coverage, final cohort semantics, and scientific approval of the 0.40 producer
+threshold explicitly deferred.” Tämä ei tarkoita numeerista pariteettia,
+toistamista, vaikutusekvivalenssia, täydellistä validointia tai kliinistä
+validiteettia eikä anna julkaisu-, disclosure-, data-egress- tai
+retention-hyväksyntää.
 
 ## Repository Tree
 ```
@@ -20,8 +34,10 @@ fof-locomotor-capacity-cohort/
 ├── fof-locomotor-capacity-cohort.Rproj
 ├── _quarto.yml
 ├── R/
+│   ├── functions/
 │   └── transform_locomotor_indicators.R
 ├── scripts/
+│   ├── K50/
 │   └── 01_generate_synthetic_fixture.R
 ├── data/
 │   ├── README.md
@@ -37,6 +53,8 @@ fof-locomotor-capacity-cohort/
 │   └── testthat/
 │       └── test_transform_locomotor_indicators.R
 └── docs/
+    ├── project_specification.md
+    ├── k50_migration_provenance.md
     ├── reproducibility_scope.md
     └── restricted_data_policy.md
 ```
@@ -129,5 +147,6 @@ Alkuperäinen aineisto on sensitiivistä geriatrista rekisteriaineistoa, eikä s
 
 ## Tunnetut puutteet ja TODO
 - Lopullinen lisenssi puuttuu (käytössä placeholder).
-- Käsikirjoitusta ja analyysikoodeja ei ole vielä migroitu.
-- Chair-rise-muuttujan reverse-coding-kaava vaatii varmentamisen (NEEDS_VERIFICATION).
+- `SCI-03C`: 0.40 producer -kynnyksen tieteellinen hyväksyntä vaatii varmentamisen.
+- `SCI-SEM-COHORT`: lopullisten kohorttisemantiikkojen tieteellinen hyväksyntä vaatii varmentamisen.
+- `RET-01`: retention-käytäntö vaatii auktoritatiivisen policy-viitteen.
