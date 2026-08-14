@@ -75,6 +75,13 @@ class DiagnosticTests(unittest.TestCase):
             "metadata": {
                 "title": "Public title",
                 "license": {"id": "mit", "title": "MIT License"},
+                "related_identifiers": [{
+                    "identifier": diagnostic.EXPECTED_REPOSITORY_IDENTIFIER,
+                    "relation": "isSupplementTo",
+                    "scheme": "url",
+                    "resource_type": "software",
+                    "server_detail": {"normalized": True},
+                }],
             },
             "links": {"bucket": "https://sandbox.zenodo.org/api/files/secret-bucket"},
             "owner": 123,
@@ -88,10 +95,42 @@ class DiagnosticTests(unittest.TestCase):
         report = diagnostic.redacted_report(draft, files)
         self.assertEqual(report["metadata_license_shape"], {"id": "string", "title": "string"})
         self.assertEqual(report["metadata_license_semantic_value"], "mit")
+        related = report["metadata_related_identifiers"]
+        self.assertEqual((related["field_type"], related["item_count"]), ("list", 1))
+        self.assertEqual(related["items"][0]["semantic_values"], {
+            "relation": "isSupplementTo", "scheme": "url", "resource_type": "software",
+        })
+        self.assertEqual(related["items"][0]["field_types"]["server_detail"], {"normalized": "boolean"})
+        self.assertTrue(related["items"][0]["identifier_matches_expected"])
         self.assertEqual(report["files"], [{"filename": "example.zip", "filesize": 42}])
         serialized = json.dumps(report)
-        for forbidden in ("secret-bucket", "md5:secret", "owner", "download"):
+        for forbidden in (
+            "secret-bucket", "md5:secret", "owner", "download",
+            diagnostic.EXPECTED_REPOSITORY_IDENTIFIER,
+        ):
             self.assertNotIn(forbidden, serialized)
+
+    def test_related_identifiers_safe_mismatch_and_malformed_shapes(self):
+        mismatch = diagnostic.related_identifiers_report([{
+            "identifier": "https://example.invalid/different",
+            "relation": "isSupplementTo",
+        }])
+        self.assertFalse(mismatch["items"][0]["identifier_matches_expected"])
+        self.assertNotIn("example.invalid", json.dumps(mismatch))
+        malformed = (
+            None,
+            {},
+            "not-a-list",
+            ["not-an-object"],
+            [{}],
+            [{"identifier": 1, "relation": "isSupplementTo"}],
+            [{"identifier": "x", "relation": None}],
+            [{"identifier": "x", "relation": "unsafe value with spaces"}],
+            [{"identifier": "x", "relation": "isSupplementTo", "scheme": {"unsafe": True}}],
+        )
+        for value in malformed:
+            with self.assertRaises(diagnostic.Stop, msg=repr(value)):
+                diagnostic.related_identifiers_report(value)
 
     def test_wrong_id_and_non_list_files_stop(self):
         with self.assertRaises(diagnostic.Stop):
