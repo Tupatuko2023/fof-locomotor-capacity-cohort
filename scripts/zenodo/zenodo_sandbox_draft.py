@@ -12,9 +12,19 @@ BASE="https://sandbox.zenodo.org/api"
 BUNDLE_NAME="fof-locomotor-capacity-cohort-0.1.0.zip"
 MIT_LICENSE_IDS=frozenset(("mit","mit-license"))
 
+def related_identifiers_match(actual,intended):
+    if actual==intended: return True
+    if not isinstance(actual,list) or not isinstance(intended,list) or len(actual)!=len(intended): return False
+    for actual_item,intended_item in zip(actual,intended):
+        if not isinstance(actual_item,dict) or not isinstance(intended_item,dict) or "scheme" in intended_item: return False
+        if set(actual_item)!=set(intended_item)|{"scheme"} or actual_item.get("scheme")!="url": return False
+        if any(actual_item.get(key)!=value for key,value in intended_item.items()): return False
+    return True
+
 def metadata_value_matches(key,actual,intended):
     if key=="license" and isinstance(intended,str) and intended in MIT_LICENSE_IDS:
         return isinstance(actual,str) and actual in MIT_LICENSE_IDS
+    if key=="related_identifiers": return related_identifiers_match(actual,intended)
     return actual==intended
 
 class Stop(RuntimeError): pass

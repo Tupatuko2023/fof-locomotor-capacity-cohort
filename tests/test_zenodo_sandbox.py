@@ -123,6 +123,29 @@ class FlowTests(unittest.TestCase):
         after_license={**client.current,"metadata":{"license":"mit-license","keywords":["wrong"]}}
         with self.assertRaisesRegex(z.Stop,"keywords"):
             client.validate_metadata(after_license,intended)
+    def test_narrow_related_identifier_enrichment_and_later_validation(self):
+        client=FakeClient()
+        item={"identifier":"https://example.test/repository","relation":"isSupplementTo","resource_type":"software"}
+        intended={"metadata":{"related_identifiers":[item],"keywords":["expected"]}}
+        exact={**client.current,"metadata":{"related_identifiers":[item],"keywords":["expected"]}}
+        client.validate_metadata(exact,intended)
+        enriched_item={**item,"scheme":"url"}
+        enriched={**client.current,"metadata":{"related_identifiers":[enriched_item],"keywords":["expected"]}}
+        client.validate_metadata(enriched,intended)
+        rejected=(
+            None, {}, [], [item,item], ["not-an-object"],
+            [{**item,"scheme":"doi"}], [{**item,"scheme":"url","extra":"x"}],
+            [{**enriched_item,"identifier":"https://example.test/other"}],
+            [{**enriched_item,"relation":"isReferencedBy"}],
+            [{**enriched_item,"resource_type":"dataset"}],
+        )
+        for value in rejected:
+            draft={**client.current,"metadata":{"related_identifiers":value,"keywords":["expected"]}}
+            with self.assertRaisesRegex(z.Stop,"related_identifiers",msg=repr(value)):
+                client.validate_metadata(draft,intended)
+        after_related={**client.current,"metadata":{"related_identifiers":[enriched_item],"keywords":["wrong"]}}
+        with self.assertRaisesRegex(z.Stop,"keywords"):
+            client.validate_metadata(after_related,intended)
     def test_replacement_zero_one_multiple_and_delete_failure(self):
         empty=FakeClient(); empty.delete_exact_bundle(empty.current); self.assertEqual(empty.calls,["files"])
         one=FakeClient([{"filename":z.BUNDLE_NAME,"id":"f1"}]); one.delete_exact_bundle(one.current); self.assertEqual(one.calls,["files","DELETE"])
