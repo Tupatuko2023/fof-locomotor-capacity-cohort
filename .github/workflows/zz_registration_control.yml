@@ -1,0 +1,13 @@
+name: Registration control
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  registration-control:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "GitHub Actions registration control"
