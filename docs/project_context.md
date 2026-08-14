@@ -4,12 +4,12 @@
 
 ```yaml
 project_context_id: A1-PROJECT-CONTEXT
-version: 0.1.0
-status: accepted
+version: 0.2.0
+status: approved
 document_evidence_state: validated
 project_name: fof-locomotor-capacity-cohort
 project_short_name: A1
-project_phase: MVP scaffold; Project Mode active for bounded initial scope
+project_phase: bounded Project Mode; K50 migration and scientific-phase closeout complete; pre-release validation active
 review_authority: User / designated project owner
 ```
 
@@ -19,14 +19,19 @@ review_authority: User / designated project owner
 project_identity:
   project_name: fof-locomotor-capacity-cohort
   project_short_name: A1
-  project_phase: MVP scaffold; Project Mode active for bounded initial scope
+  project_phase: bounded Project Mode; K50 migration and scientific-phase closeout complete; pre-release validation active
   mission_or_goal: >
     Document a 12-month fear-of-falling and locomotor-capacity cohort
     analysis pipeline with public structural and rendering reproducibility
     while keeping restricted participant-level data out of Git.
 ```
 
-The inspected target repository currently contains a safe reproducibility scaffold, synthetic test data, R test code and Quarto smoke-test structure. The repository documentation states that real analysis code and the manuscript have not yet been migrated and that analytical results are not included.
+The target repository now contains the bounded migrated K50 analysis core,
+synthetic fixtures, structural tests, Quarto smoke-test structure, a public
+traceability demonstration, release-candidate metadata and a draft-only Zenodo
+Sandbox workflow. It does not contain protected analytical results or
+participant-level data. Earlier scaffold-only descriptions are historical and
+are superseded by the current-state record in Section 16.
 
 ## 3. Repository Context
 
@@ -38,13 +43,12 @@ repository_context:
     - repository: Tupatuko2023/Python-R-Scripts
       source_revision: 8a4a4e37751a4416a6a875787a8173f621da91a9
       source_path: Fear-of-Falling
-      status: verified source identity, pinned revision and source path for further bounded inspection and migration planning only
+      status: verified source identity and bounded K50 source for the completed provenance-preserving migration
   repository_relationship_summary: >
-    The candidate source repository identity, inspected immutable revision and
-    repository-relative source path have been verified for further bounded
-    inspection and migration planning. Migration requirement, source path
-    contents, artifact eligibility, dependency closure, privacy/provenance,
-    migration strategy and copying permission remain NEEDS_VERIFICATION.
+    The source identity, immutable revision and bounded K50 source paths are
+    verified. The approved K50 core was migrated using provenance-preserving
+    copy and has target-side provenance evidence. This does not approve or
+    classify the remainder of the source repository.
 ```
 
 ## 4. Working Context
@@ -133,7 +137,7 @@ publication_context:
     Public scaffold repository for structural and rendering reproducibility
     with public materials; full numerical reproduction requires an approved
     restricted environment.
-  publication_target_known: unknown
+  publication_target_known: planned archival software release v0.1.0; formal release not performed
   repository_role_relative_to_publication: >
     Supports transparent pipeline documentation and public reproducibility
     scaffolding, not final analytical results.
@@ -145,18 +149,21 @@ This context does not authorize publication, release, archive deposit, pull requ
 
 ```yaml
 migration_context:
-  migration_expected: NEEDS_VERIFICATION
-  source_repository_relationship: source identity, pinned revision and source path verified for further bounded inspection and migration planning only
+  migration_expected: yes; bounded K50 migration completed
+  source_repository_relationship: source identity, pinned revision and bounded migrated source paths verified
   source_repository: Tupatuko2023/Python-R-Scripts
   source_revision: 8a4a4e37751a4416a6a875787a8173f621da91a9
   source_path: Fear-of-Falling
   target_repository_relationship: public target scaffold repository verified
-  migration_requirement_status: NEEDS_VERIFICATION
-  project_specification_reference: NEEDS_VERIFICATION
+  migration_requirement_status: approved and completed for the bounded K50 core
+  approved_migration_strategy: provenance_preserving_copy
+  project_specification_reference: docs/project_specification.md
   repository_patterns_reference: RESEARCH_REPOSITORY_PATTERNS.md
 ```
 
-No migration strategy is selected. No source repository content inspection, artifact classification, dependency closure, privacy/provenance review or migration execution has been approved by this context.
+The bounded K50 migration and its provenance are complete. Broader source
+inspection, artifact disposition and migration beyond that approved payload
+remain outside this Context unless separately authorized.
 
 ## 9. Validation Environment Context
 
@@ -169,7 +176,7 @@ validation_environment_context:
     - quarto CLI not found in PATH during bootstrap inspection
   environment_specific_limitations:
     - Quarto render cannot be validated in the current PATH
-    - chair-rise reverse-coding formula remains NEEDS_VERIFICATION
+    - chair-rise semantics are resolved for the bounded A1/K50 contract; broader use remains scope-bound
     - renv activation is not active because renv/activate.R was not present during R test startup
 ```
 
@@ -281,15 +288,16 @@ Validation or acceptance claim.
 
 ## 14. Open `NEEDS_VERIFICATION` Items
 
-- Source path contents and artifact classification/disposition.
-- Whether migration is required for A1 and under what approved contract.
-- Project Specification storage location and approval scope.
+- Source contents and artifact classification/disposition outside the bounded migrated K50 payload.
 - Approved execution `allowed_paths` and `forbidden_paths`.
 - Approved protected analysis environment.
 - Quarto CLI availability in the intended validation environment.
 - `renv` activation and dependency-lock status.
-- Chair-rise reverse-coding formula.
-- Publication target and publication review authority.
+- Publication review authority and final manuscript/supplement scope.
+- SCI-03C canonical meaning, due to a conflict between README and the normative closeout wording.
+- SCI-SEM-COHORT scientific approval.
+- RET-01 authoritative policy reference.
+- Final root cause of the Zenodo workflow registration failure.
 
 ## 15. Dependencies and References
 
@@ -319,3 +327,60 @@ RESEARCH_REPOSITORY_PATTERNS.md
 ```
 
 This context is not an active Project Specification, Migration Contract, source-repository access authorization, migration authorization or Git Hard Gate record.
+
+## 16. Canonical Current-State Alignment
+
+This section is the active current-state record as of 2026-08-14. It
+supersedes earlier bootstrap and planning statements only where they describe
+an item below as unresolved or not yet performed. Historical Owner decisions
+and migration-time evidence remain historical records and are not rewritten.
+
+```yaml
+current_state:
+  target_repository_role: public research-software repository with a synthetic-only public validation boundary
+  project_mode: active for bounded Work Packages; no standing Git or external-action authority
+  migration_required: yes
+  migration_strategy: provenance_preserving_copy
+  bounded_k50_migration: completed and provenance-verified
+  scientific_phase: CLOSED_WITH_DEFERRED_SCIENTIFIC_ITEMS
+  chair_rise_semantics: resolved for the bounded A1/K50 contract
+  dependency_authority: DESCRIPTION
+  active_renv_environment: false
+  current_environment_quarto: unavailable
+  historical_quarto_evidence: PASS in a compatible Ubuntu PRoot environment
+  target_license: MIT
+  formal_software_release: not_performed
+  git_tag_v0_1_0: not_created
+  github_release: not_created
+  production_zenodo_record: not_created
+  zenodo_sandbox_create: not_performed
+  github_actions:
+    registration_control: registered_active_not_dispatched
+    zenodo_sandbox_workflow: not_registered
+    root_cause: NEEDS_VERIFICATION
+  sandbox_bundle_boundary: explicit_allowlist_implemented_and_statically_validated
+  permanent_execution_allowed_paths: none
+  gpt_material:
+    tracked_public: FARO1 knowledge baseline files
+    untracked_local: orchestration prompts, audit and working material
+    zenodo_bundle: excluded
+  agents_md:
+    public_repository: tracked
+    zenodo_bundle: excluded
+```
+
+The following remain open and are not promoted by this alignment:
+
+- `SCI-03C: CONFLICT / NEEDS_VERIFICATION`. README and the normative
+  closeout/specification currently assign incompatible meanings to this
+  identifier. No canonical meaning is asserted pending Owner clarification.
+- `SCI-SEM-COHORT`: scientific approval remains deferred.
+- `SCI-03D`: remains `IMPLEMENTATION_SAFEGUARD_ONLY`.
+- `RET-01`: remains `POLICY_REFERENCE_REQUIRED`.
+- the approved protected analysis environment;
+- final manuscript and supplement publication boundaries;
+- steward and review cadence;
+- the final Zenodo-workflow registration root cause.
+
+This alignment makes no numerical-parity, clinical-validity, publication,
+disclosure, retention, DOI or protected-data claim.

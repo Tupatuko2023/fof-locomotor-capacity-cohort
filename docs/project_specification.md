@@ -5,8 +5,8 @@
 ```yaml
 title: A1 Project Specification
 document_id: A1-PROJECT-SPECIFICATION
-version: 0.2.0
-status: accepted
+version: 0.3.0
+status: approved
 project_id: A1
 scope: >
   Approved project requirements for the fof-locomotor-capacity-cohort target
@@ -18,7 +18,7 @@ effective_date: 2026-08-10
 review_date_or_cadence: NEEDS_VERIFICATION
 document_evidence_state: validated
 project_mode_status: active; A1/K50 scientific phase closed with deferred scientific items
-source_of_truth_state: partial; accepted target-repository context with unresolved source-repository and migration fields
+source_of_truth_state: aligned current state with completed bounded K50 migration and explicitly retained unresolved fields
 activation_rule: active by Owner decision recorded in this Specification; bounded initial scope only
 ```
 
@@ -878,7 +878,7 @@ approved_decisions:
   SCI-SEM-LC: approved
   SCI-SEM-CHAIR: approved
 deferred_or_limited_items:
-  SCI-03C: NEEDS_VERIFICATION
+  SCI-03C: CONFLICT / NEEDS_VERIFICATION
   SCI-SEM-COHORT: NEEDS_VERIFICATION
   SCI-03D: IMPLEMENTATION_SAFEGUARD_ONLY
   RET-01: POLICY_REFERENCE_REQUIRED
@@ -900,11 +900,12 @@ times are sign-reversed for the score direction, while non-positive or invalid
 values are missing. Earlier statements that the chair-rise formula itself is
 unresolved are superseded for this bounded contract.
 
-The only defensible affirmative claim for this closeout is:
+The only defensible affirmative claim for this closeout, excluding the
+conflicted SCI-03C identifier semantics, is:
 
 > A1/K50 conforms structurally and methodologically to the currently
-> Owner-approved analysis contracts, with z3 coverage, final cohort semantics,
-> and scientific approval of the 0.40 producer threshold explicitly deferred.
+> Owner-approved analysis contracts at the structural and methodological
+> conformity level, with unresolved scientific items explicitly deferred.
 
 This closeout does **not** establish numerical parity, numerical reproduction,
 effect equivalence, full validation, clinical validity, publication approval,
@@ -913,8 +914,9 @@ A, `SCI-REF` and `SCI-TOL` are inactive rather than failed or completed.
 
 The deferred scientific register remains active:
 
-- `SCI-03C`: the scientific approval of the 0.40 producer threshold remains
-  `NEEDS_VERIFICATION`.
+- `SCI-03C`: `CONFLICT / NEEDS_VERIFICATION`. README and this normative
+  closeout/specification currently assign incompatible meanings to this
+  identifier. No canonical meaning is asserted until Owner clarification.
 - `SCI-SEM-COHORT`: final cohort semantics remain `NEEDS_VERIFICATION` as a
   scientific approval item; their implemented structure may be described only
   within the bounded conformity claim above.
@@ -960,3 +962,75 @@ RESEARCH_REPOSITORY_PATTERNS.md
 This Specification records bounded Project Mode activation and the bounded
 A1/K50 scientific-phase closeout. It does not approve staging, commit, push,
 pull request, release, publication, disclosure, data egress, or retention.
+
+## 16. Canonical Current-State Alignment
+
+This section is the active project-state summary as of 2026-08-14. It
+supersedes earlier planning-state fields only where later accepted decisions,
+completed Git history or validated repository evidence establish the current
+value. It does not rewrite migration-time provenance or create new scientific
+authority.
+
+```yaml
+canonical_current_state:
+  project_phase: bounded Project Mode; pre-release validation
+  target_repository_role: public research-software repository with synthetic-only public validation
+  migration:
+    required: yes
+    strategy: provenance_preserving_copy
+    bounded_k50_core: completed
+    provenance: verified
+    broader_source_scope: not_approved
+  scientific_phase: CLOSED_WITH_DEFERRED_SCIENTIFIC_ITEMS
+  scientific_state:
+    SCI-SEM-CHAIR: approved for the bounded A1/K50 contract
+    SCI-03C: CONFLICT / NEEDS_VERIFICATION
+    SCI-SEM-COHORT: NEEDS_VERIFICATION
+    SCI-03D: IMPLEMENTATION_SAFEGUARD_ONLY
+    RET-01: POLICY_REFERENCE_REQUIRED
+    numerical_parity: not_established
+  reproducibility_environment:
+    dependency_authority: DESCRIPTION
+    active_renv: false
+    current_environment_quarto: unavailable
+    compatible_environment_quarto_evidence: PASS
+    protected_analysis_environment: NEEDS_VERIFICATION
+  publication:
+    metadata_candidate_on_main: true
+    formal_release: not_performed
+    tag_v0_1_0: not_created
+    github_release: not_created
+    production_zenodo: not_created
+    doi: not_published
+    manuscript_supplement_boundary: NEEDS_VERIFICATION
+  sandbox:
+    bundle_boundary: explicit_allowlist_implemented_and_statically_validated
+    create_operation: not_performed
+  github_actions:
+    registration_control: registered_active_not_dispatched
+    zenodo_workflow: not_registered
+    zenodo_workflow_root_cause: NEEDS_VERIFICATION
+  repository_hygiene:
+    tracked_gpt_material: FARO1 knowledge baseline files
+    untracked_gpt_material: local orchestration and audit material
+    agents_md: tracked_public
+    zenodo_bundle_excludes_gpt_and_agents: true
+  execution_authority:
+    permanent_allowed_paths: none
+    rule: each write or external action requires a separately approved bounded Work Package
+```
+
+The SCI-03C conflict is intentionally preserved. The affected semantic scope
+is suspended pending Owner clarification; this alignment does not choose
+between the incompatible meanings. `SCI-03D` remains an implementation
+safeguard only. Participant-data, privacy, disclosure and publication
+boundaries are unchanged.
+
+Open governance and release items remain:
+
+- protected analysis environment;
+- final manuscript/supplement boundary and disclosure authority;
+- steward and review cadence;
+- `SCI-SEM-COHORT`, `RET-01` and the SCI-03C conflict;
+- final Zenodo-workflow registration root cause;
+- any future `renv` adoption, which requires a separate architecture decision.
