@@ -124,9 +124,27 @@ class FlowTests(unittest.TestCase):
     def test_upload_failure_and_read_after_write(self):
         c=FakeClient(); c.upload=lambda *a: (_ for _ in ()).throw(z.Stop("ambiguous"))
         with self.assertRaisesRegex(z.Stop,"did not prove"): z.execute(c,"CREATE","CREATE_SANDBOX_DRAFT","",self.payload,self.bundle)
-        c=FakeClient()
+        state={}; c=FakeClient()
         def ambiguous(draft,bundle): c.file=[{"filename":z.BUNDLE_NAME,"filesize":1,"checksum":z.expected_md5(bundle)}]; raise z.Stop("ambiguous")
-        c.upload=ambiguous; z.execute(c,"CREATE","CREATE_SANDBOX_DRAFT","",self.payload,self.bundle)
+        c.upload=ambiguous; z.execute(c,"CREATE","CREATE_SANDBOX_DRAFT","",self.payload,self.bundle,state)
+        self.assertEqual(state["draft_id"],"7")
+    def test_create_failure_state_preserves_id_after_post(self):
+        state={}; before=FakeClient(); before.request=lambda *a,**k: (_ for _ in ()).throw(z.Stop("POST failed"))
+        with self.assertRaises(z.Stop): z.execute(before,"CREATE","CREATE_SANDBOX_DRAFT","",self.payload,self.bundle,state)
+        self.assertEqual(z.failure_attestation("CREATE",state.get("draft_id",""),self.bundle,"abc","1")["sandbox_deposition_id"],"UNAVAILABLE")
+        state={}; metadata=FakeClient(); metadata.validate_metadata=lambda *a: (_ for _ in ()).throw(z.Stop("metadata failed"))
+        with self.assertRaises(z.Stop): z.execute(metadata,"CREATE","CREATE_SANDBOX_DRAFT","",self.payload,self.bundle,state)
+        self.assertEqual(z.failure_attestation("CREATE",state["draft_id"],self.bundle,"abc","1")["sandbox_deposition_id"],"7")
+        state={}; upload=FakeClient(); upload.upload=lambda *a: (_ for _ in ()).throw(z.Stop("upload failed")); upload.files=lambda *a: []
+        with self.assertRaises(z.Stop): z.execute(upload,"CREATE","CREATE_SANDBOX_DRAFT","",self.payload,self.bundle,state)
+        self.assertEqual(state["draft_id"],"7")
+        state={}; readback=FakeClient(); readback.files=lambda *a: (_ for _ in ()).throw(z.Stop("read-back failed"))
+        with self.assertRaises(z.Stop): z.execute(readback,"CREATE","CREATE_SANDBOX_DRAFT","",self.payload,self.bundle,state)
+        self.assertEqual(state["draft_id"],"7")
+    def test_update_failure_state_preserves_existing_id(self):
+        state={}; c=FakeClient(); c.get_draft=lambda *a: (_ for _ in ()).throw(z.Stop("GET failed"))
+        with self.assertRaises(z.Stop): z.execute(c,"UPDATE","","7",self.payload,self.bundle,state)
+        self.assertEqual(z.failure_attestation("UPDATE",state["draft_id"],self.bundle,"abc","1")["sandbox_deposition_id"],"7")
     def test_get_put_and_post_failures_never_fallback(self):
         for mode,method in (("UPDATE","get"),("UPDATE","PUT"),("CREATE","POST")):
             c=FakeClient()
@@ -142,6 +160,9 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(set(a),{"sandbox_deposition_id","sandbox_draft_reference","source_commit_sha","workflow_run_id","operation","state","bundle_sha256","timestamp"})
         for forbidden in ("token","authorization","bucket","doi","owner"): self.assertNotIn(forbidden,text)
         failed=z.failure_attestation("CREATE","",self.bundle,"abc","1"); self.assertEqual(failed["state"],"FAILED_CLOSED_NEEDS_VERIFICATION"); self.assertEqual(failed["sandbox_deposition_id"],"UNAVAILABLE")
+        failed_with_id=z.failure_attestation("CREATE","7",self.bundle,"abc","1")
+        self.assertEqual(failed_with_id["sandbox_deposition_id"],"7")
+        for forbidden in ("token","authorization","bucket","doi","owner"): self.assertNotIn(forbidden,json.dumps(failed_with_id).lower())
 
 class Response:
     def __init__(self,payload=b'{}',url='https://sandbox.zenodo.org/api/deposit/depositions/7'): self.payload=payload; self.url=url

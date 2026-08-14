@@ -88,11 +88,15 @@ def failure_attestation(mode,draft_id,bundle,source_sha,run_id):
     safe_id=str(draft_id) if str(draft_id).isdigit() else "UNAVAILABLE"
     return {"sandbox_deposition_id":safe_id,"sandbox_draft_reference":f"https://sandbox.zenodo.org/deposit/{safe_id}" if safe_id!="UNAVAILABLE" else "UNAVAILABLE","source_commit_sha":source_sha,"workflow_run_id":str(run_id),"operation":mode,"state":"FAILED_CLOSED_NEEDS_VERIFICATION","bundle_sha256":digest(bundle),"timestamp":dt.datetime.now(dt.timezone.utc).isoformat()}
 
-def execute(client,mode,confirmation,draft_id,metadata,bundle):
+def execute(client,mode,confirmation,draft_id,metadata,bundle,operation_state=None):
+    operation_state = operation_state if operation_state is not None else {}
+    if draft_id:
+        operation_state["draft_id"] = str(draft_id)
     client.license_preflight()
     if mode=="CREATE":
         if confirmation!="CREATE_SANDBOX_DRAFT" or draft_id: raise Stop("CREATE requires exact confirmation and no draft_id")
         draft=client.request("POST",f"{BASE}/deposit/depositions",metadata)
+        operation_state["draft_id"] = str(draft.get("id", "")) if isinstance(draft, dict) else ""
         client.validate_draft(draft); client.validate_metadata(draft,metadata)
     elif mode=="UPDATE":
         if not draft_id or confirmation: raise Stop("UPDATE requires draft_id and no create confirmation")
@@ -113,10 +117,11 @@ def main():
     p=argparse.ArgumentParser(); p.add_argument("--mode",required=True); p.add_argument("--create-confirmation",default=""); p.add_argument("--draft-id",default=""); p.add_argument("--metadata",type=Path,required=True); p.add_argument("--bundle",type=Path,required=True); p.add_argument("--attestation",type=Path,required=True); p.add_argument("--source-sha",required=True); p.add_argument("--workflow-run-id",required=True); a=p.parse_args()
     token=os.environ.get("ZENODO_SANDBOX_TOKEN");
     if not token: raise Stop("ZENODO_SANDBOX_TOKEN is required")
+    operation_state={"draft_id":a.draft_id}
     try:
-        draft=execute(Client(token),a.mode,a.create_confirmation,a.draft_id,json.loads(a.metadata.read_text()),a.bundle)
+        draft=execute(Client(token),a.mode,a.create_confirmation,a.draft_id,json.loads(a.metadata.read_text()),a.bundle,operation_state)
     except Stop:
-        a.attestation.write_text(json.dumps(failure_attestation(a.mode,a.draft_id,a.bundle,a.source_sha,a.workflow_run_id),indent=2)+"\n")
+        a.attestation.write_text(json.dumps(failure_attestation(a.mode,operation_state["draft_id"],a.bundle,a.source_sha,a.workflow_run_id),indent=2)+"\n")
         raise
     a.attestation.write_text(json.dumps(attestation(draft,a.mode,a.bundle,a.source_sha,a.workflow_run_id),indent=2)+"\n")
     print(f"SANDBOX_DRAFT_OPERATION=PASS mode={a.mode} state=UNPUBLISHED_SANDBOX_DRAFT")
