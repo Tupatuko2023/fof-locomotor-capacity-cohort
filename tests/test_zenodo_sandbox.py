@@ -111,6 +111,18 @@ class FlowTests(unittest.TestCase):
         c.request=bad
         with self.assertRaisesRegex(z.Stop,"metadata"): z.execute(c,"UPDATE","","7",self.payload,self.bundle)
         self.assertNotIn("upload",c.calls)
+    def test_narrow_mit_alias_and_post_license_metadata_validation(self):
+        client=FakeClient(); intended={"metadata":{"license":"mit","keywords":["expected"]}}
+        for license_value in ("mit","mit-license"):
+            draft={**client.current,"metadata":{"license":license_value,"keywords":["expected"]}}
+            client.validate_metadata(draft,intended)
+        for license_value in ("MIT"," mit ","apache-2.0","permit",None,"",{"id":"mit"},["mit"]):
+            draft={**client.current,"metadata":{"license":license_value,"keywords":["expected"]}}
+            with self.assertRaisesRegex(z.Stop,"license",msg=repr(license_value)):
+                client.validate_metadata(draft,intended)
+        after_license={**client.current,"metadata":{"license":"mit-license","keywords":["wrong"]}}
+        with self.assertRaisesRegex(z.Stop,"keywords"):
+            client.validate_metadata(after_license,intended)
     def test_replacement_zero_one_multiple_and_delete_failure(self):
         empty=FakeClient(); empty.delete_exact_bundle(empty.current); self.assertEqual(empty.calls,["files"])
         one=FakeClient([{"filename":z.BUNDLE_NAME,"id":"f1"}]); one.delete_exact_bundle(one.current); self.assertEqual(one.calls,["files","DELETE"])

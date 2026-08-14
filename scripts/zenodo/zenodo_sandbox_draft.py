@@ -10,6 +10,12 @@ from urllib.request import Request, urlopen
 
 BASE="https://sandbox.zenodo.org/api"
 BUNDLE_NAME="fof-locomotor-capacity-cohort-0.1.0.zip"
+MIT_LICENSE_IDS=frozenset(("mit","mit-license"))
+
+def metadata_value_matches(key,actual,intended):
+    if key=="license" and isinstance(intended,str) and intended in MIT_LICENSE_IDS:
+        return isinstance(actual,str) and actual in MIT_LICENSE_IDS
+    return actual==intended
 
 class Stop(RuntimeError): pass
 class Client:
@@ -57,7 +63,7 @@ class Client:
     def validate_metadata(self,draft,intended):
         actual=draft.get("metadata",{})
         for key,value in intended.get("metadata",{}).items():
-            if actual.get(key)!=value: raise Stop(f"draft metadata verification failed: {key}")
+            if not metadata_value_matches(key,actual.get(key),value): raise Stop(f"draft metadata verification failed: {key}")
     def files(self,did): return self.request("GET",f"{BASE}/deposit/depositions/{did}/files")
     def delete_exact_bundle(self,draft):
         current=self.files(draft["id"])
