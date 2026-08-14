@@ -177,6 +177,7 @@ validation_environment_context:
     - quarto CLI not found in native Termux PATH during bootstrap inspection
   environment_specific_limitations:
     - native Termux cannot perform Quarto render validation with its current PATH
+    - inherited Termux PATH entries can select Termux R inside Ubuntu PROOT and must be isolated from the approved Ubuntu render runtime
     - chair-rise semantics are resolved for the bounded A1/K50 contract; broader use remains scope-bound
     - renv activation is not active because renv/activate.R was not present during R test startup
   approved_render_validation_environment:
@@ -189,6 +190,8 @@ validation_environment_context:
       rmarkdown: 2.30
     dependency_authority: DESCRIPTION
     active_renv: false
+    runtime_isolation_requirement: R and Rscript must resolve from the Ubuntu runtime rather than inherited Termux paths
+    environment_confusion_risk: Termux R 4.5.3 is not an approved Ubuntu render runtime
     required_evidence:
       - repository revision and render command
       - Ubuntu, Quarto, R and render-package versions
@@ -377,19 +380,31 @@ current_state:
     r_version: 4.5.2
     knitr_version: 1.51
     rmarkdown_version: 2.30
+    runtime_isolation_requirement: R and Rscript resolve from the Ubuntu runtime, not inherited Termux paths
+    environment_confusion_risk: Termux R 4.5.3 is outside the approved Ubuntu render runtime
     evidence_policy: versions, repository revision, command, synthetic-only declaration, side-effect manifest, result and cleanup
   render_side_effect_policy: expected outputs and ignored caches are allowed when classified, bounded and safely cleanable; unexpected tracked source changes are not allowed
   target_license: MIT
+  release_candidate_scope: v0.1.0 is an independent synthetic-only research-software release candidate, not a manuscript, supplement or scientific-results release
   formal_software_release: not_performed
   git_tag_v0_1_0: not_created
   github_release: not_created
   production_zenodo_record: not_created
-  zenodo_sandbox_create: not_performed
+  production_zenodo_authorized: false
   github_actions:
     registration_control: registered_active_not_dispatched
-    zenodo_sandbox_workflow: not_registered
-    root_cause: NEEDS_VERIFICATION
-  sandbox_bundle_boundary: explicit_allowlist_implemented_and_statically_validated
+    zenodo_sandbox_workflow: registered_active_and_validated
+  sandbox:
+    phase: COMPLETE / VALIDATED
+    draft_id: 587120
+    draft_state: unpublished_unsubmitted
+    pipeline_validation: end_to_end_pass
+    metadata_readback: PASS
+    bundle_upload_and_readback: PASS
+    disposition: retained_as_validation_evidence_pending_later_explicit_decision
+    formal_release: false
+    production_zenodo: not_authorized
+    bundle_boundary: explicit_allowlist_implemented_and_validated
   permanent_execution_allowed_paths: none
   gpt_material:
     tracked_public: FARO1 knowledge baseline files
@@ -411,7 +426,7 @@ The following remain open and are not promoted by this alignment:
 - the approved protected analysis environment;
 - final manuscript and supplement publication boundaries;
 - steward and review cadence;
-- the final Zenodo-workflow registration root cause.
+- AI-assistance disclosure and GPT/AGENTS release hygiene.
 
 This alignment makes no numerical-parity, clinical-validity, publication,
 disclosure, retention, DOI or protected-data claim.

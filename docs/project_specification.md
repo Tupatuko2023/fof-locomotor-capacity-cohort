@@ -693,6 +693,8 @@ tool_agent_environment_constraints:
       rmarkdown: 2.30
     dependency_authority: DESCRIPTION
     active_renv: false
+    runtime_isolation_requirement: R and Rscript must resolve from the Ubuntu runtime rather than inherited Termux paths
+    environment_confusion_risk: Termux R 4.5.3 is not an approved Ubuntu render runtime
     required_version_evidence:
       - Ubuntu release
       - Quarto, R, knitr and rmarkdown versions
@@ -1020,11 +1022,14 @@ canonical_current_state:
       rmarkdown_version: 2.30
       smoke_render: PASS
       validation_status: APPROVED_FOR_RENDER_VALIDATION
+      runtime_isolation_requirement: R and Rscript resolve from the Ubuntu runtime, not inherited Termux paths
+      environment_confusion_risk: Termux R 4.5.3 is outside the approved Ubuntu render runtime
       evidence_policy: versions, repository revision, command, synthetic-only declaration, side-effect manifest, result and cleanup
     render_side_effect_policy: expected outputs and ignored caches are allowed when classified, bounded and safely cleanable; unexpected tracked source changes are not allowed
     protected_analysis_environment: NEEDS_VERIFICATION
   publication:
     metadata_candidate_on_main: true
+    release_candidate_scope: v0.1.0 is an independent synthetic-only research-software release candidate, not a manuscript, supplement or scientific-results release
     formal_release: not_performed
     tag_v0_1_0: not_created
     github_release: not_created
@@ -1032,12 +1037,19 @@ canonical_current_state:
     doi: not_published
     manuscript_supplement_boundary: NEEDS_VERIFICATION
   sandbox:
-    bundle_boundary: explicit_allowlist_implemented_and_statically_validated
-    create_operation: not_performed
+    phase: COMPLETE / VALIDATED
+    draft_id: 587120
+    draft_state: unpublished_unsubmitted
+    pipeline_validation: end_to_end_pass
+    metadata_readback: PASS
+    bundle_upload_and_readback: PASS
+    disposition: retained_as_validation_evidence_pending_later_explicit_decision
+    formal_release: false
+    production_zenodo: not_authorized
+    bundle_boundary: explicit_allowlist_implemented_and_validated
   github_actions:
     registration_control: registered_active_not_dispatched
-    zenodo_workflow: not_registered
-    zenodo_workflow_root_cause: NEEDS_VERIFICATION
+    zenodo_workflow: registered_active_and_validated
   repository_hygiene:
     tracked_gpt_material: FARO1 knowledge baseline files
     untracked_gpt_material: local orchestration and audit material
@@ -1060,5 +1072,5 @@ Open governance and release items remain:
 - final manuscript/supplement boundary and disclosure authority;
 - steward and review cadence;
 - `SCI-SEM-COHORT`, `RET-01` and the SCI-03C conflict;
-- final Zenodo-workflow registration root cause;
+- AI-assistance disclosure and GPT/AGENTS release hygiene;
 - any future `renv` adoption, which requires a separate architecture decision.
