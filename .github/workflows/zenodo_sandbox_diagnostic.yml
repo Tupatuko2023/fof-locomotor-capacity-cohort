@@ -1,0 +1,33 @@
+name: Zenodo Sandbox read-only diagnostic
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fof-locomotor-capacity-cohort-zenodo-sandbox-diagnostic
+  cancel-in-progress: false
+
+jobs:
+  inspect-draft-587120:
+    environment: zenodo-sandbox
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Read and redact approved Sandbox draft state
+        env:
+          ZENODO_SANDBOX_TOKEN: ${{ secrets.ZENODO_SANDBOX_TOKEN }}
+        run: >-
+          python scripts/zenodo/zenodo_sandbox_diagnostic.py
+          --output "$RUNNER_TEMP/zenodo-sandbox-diagnostic-587120.json"
+      - name: Upload redacted diagnostic report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zenodo-sandbox-diagnostic-587120
+          path: ${{ runner.temp }}/zenodo-sandbox-diagnostic-587120.json
+          if-no-files-found: error

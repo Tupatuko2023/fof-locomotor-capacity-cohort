@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+"""Read-only, redacted diagnostic for one approved Zenodo Sandbox draft."""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+
+ORIGIN = "https://sandbox.zenodo.org"
+DRAFT_ID = "587120"
+DRAFT_URL = f"{ORIGIN}/api/deposit/depositions/{DRAFT_ID}"
+FILES_URL = f"{DRAFT_URL}/files"
+ALLOWED_URLS = frozenset((DRAFT_URL, FILES_URL))
+
+
+class Stop(RuntimeError):
+    pass
+
+
+class RejectRedirects(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise Stop("redirect refused for authenticated diagnostic GET")
+
+
+def default_opener(request, timeout):
+    return build_opener(RejectRedirects()).open(request, timeout=timeout)
+
+
+def authenticated_get(url, token, opener=default_opener):
+    if url not in ALLOWED_URLS:
+        raise Stop("request URL is outside the diagnostic allowlist")
+    request = Request(url, headers={"Authorization": f"Bearer {token}"}, method="GET")
+    try:
+        with opener(request, 60) as response:
+            if response.geturl() != url:
+                raise Stop("response URL differs from the approved request URL")
+            payload = response.read()
+    except Stop:
+        raise
+    except HTTPError as error:
+        raise Stop(f"Sandbox diagnostic GET stopped with HTTP {error.code}") from None
+    except (URLError, TimeoutError, json.JSONDecodeError):
+        raise Stop("Sandbox diagnostic GET failed closed") from None
+    try:
+        return json.loads(payload)
+    except json.JSONDecodeError:
+        raise Stop("Sandbox diagnostic response was not JSON") from None
+
+
+def json_shape(value):
+    if isinstance(value, dict):
+        return {key: json_shape(value[key]) for key in sorted(value)}
+    if isinstance(value, list):
+        return [json_shape(value[0])] if value else []
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "boolean"
+    if isinstance(value, (int, float)):
+        return "number"
+    return "string"
+
+
+def license_semantic_value(value):
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dict):
+        for key in ("id", "identifier", "name", "title"):
+            candidate = value.get(key)
+            if isinstance(candidate, str):
+                return candidate
+    return None
+
+
+def redacted_report(draft, files):
+    if str(draft.get("id")) != DRAFT_ID:
+        raise Stop("diagnostic response draft ID mismatch")
+    if not isinstance(files, list):
+        raise Stop("diagnostic files response was not a list")
+    metadata = draft.get("metadata")
+    if not isinstance(metadata, dict):
+        raise Stop("diagnostic metadata was not an object")
+    license_value = metadata.get("license")
+    safe_files = []
+    for item in files:
+        if not isinstance(item, dict):
+            raise Stop("diagnostic file entry was not an object")
+        safe_files.append({
+            "filename": item.get("filename"),
+            "filesize": item.get("filesize"),
+        })
+    return {
+        "draft_id": DRAFT_ID,
+        "submitted": draft.get("submitted"),
+        "published": draft.get("published"),
+        "state": draft.get("state"),
+        "status": draft.get("status"),
+        "modified": draft.get("modified"),
+        "metadata_license_shape": json_shape(license_value),
+        "metadata_license_semantic_value": license_semantic_value(license_value),
+        "metadata_key_names": sorted(metadata),
+        "file_count": len(safe_files),
+        "files": safe_files,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    token = os.environ.get("ZENODO_SANDBOX_TOKEN")
+    if not token:
+        raise Stop("ZENODO_SANDBOX_TOKEN is required")
+    draft = authenticated_get(DRAFT_URL, token)
+    files = authenticated_get(FILES_URL, token)
+    report = redacted_report(draft, files)
+    args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print("SANDBOX_DIAGNOSTIC=PASS requests=2 methods=GET redaction=PASS")
+
+
+if __name__ == "__main__":
+    main()
