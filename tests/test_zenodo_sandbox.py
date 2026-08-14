@@ -174,13 +174,26 @@ class Response:
 class HttpTests(unittest.TestCase):
     def test_endpoint_method_and_redirect_allowlist(self):
         c=z.Client("fake",lambda req,timeout: Response(url=req.full_url))
-        allowed=[("GET",z.BASE+"/licenses/?q=MIT&size=10","application/json"),("GET",z.BASE+"/deposit/depositions/7","application/json"),("GET",z.BASE+"/deposit/depositions/7/files","application/json"),("POST",z.BASE+"/deposit/depositions","application/json"),("PUT",z.BASE+"/deposit/depositions/7","application/json"),("PUT",z.BASE+"/files/abc/"+z.BUNDLE_NAME,"application/octet-stream"),("DELETE",z.BASE+"/deposit/depositions/7/files/f1","application/json")]
+        allowed=[("GET",z.BASE+"/vocabularies/licenses?q=MIT&size=10","application/json"),("GET",z.BASE+"/deposit/depositions/7","application/json"),("GET",z.BASE+"/deposit/depositions/7/files","application/json"),("POST",z.BASE+"/deposit/depositions","application/json"),("PUT",z.BASE+"/deposit/depositions/7","application/json"),("PUT",z.BASE+"/files/abc/"+z.BUNDLE_NAME,"application/octet-stream"),("DELETE",z.BASE+"/deposit/depositions/7/files/f1","application/json")]
         for args in allowed: c.validate_operation(*args)
-        denied=[("GET","https://zenodo.org/api/deposit/depositions/7"),("GET","https://evil.test/api/deposit/depositions/7"),("GET","http://sandbox.zenodo.org/api/deposit/depositions/7"),("POST",z.BASE+"/deposit/depositions/7/actions/publish"),("POST",z.BASE+"/deposit/depositions/7/actions/discard"),("POST",z.BASE+"/deposit/depositions/7/actions/newversion"),("POST",z.BASE+"/unexpected"),("PUT",z.BASE+"/unexpected"),("DELETE",z.BASE+"/deposit/depositions/7"),("PATCH",z.BASE+"/deposit/depositions/7")]
+        denied=[("GET",z.BASE+"/licenses/?q=MIT&size=10"),("GET",z.BASE+"/vocabularies/licenses?q=Apache-2.0&size=10"),("GET",z.BASE+"/vocabularies/licenses?size=10&q=MIT"),("GET","https://zenodo.org/api/deposit/depositions/7"),("GET","https://evil.test/api/deposit/depositions/7"),("GET","http://sandbox.zenodo.org/api/deposit/depositions/7"),("POST",z.BASE+"/deposit/depositions/7/actions/publish"),("POST",z.BASE+"/deposit/depositions/7/actions/discard"),("POST",z.BASE+"/deposit/depositions/7/actions/newversion"),("POST",z.BASE+"/unexpected"),("PUT",z.BASE+"/unexpected"),("DELETE",z.BASE+"/deposit/depositions/7"),("PATCH",z.BASE+"/deposit/depositions/7")]
         for method,url in denied:
             with self.assertRaises(z.Stop,msg=url): c.validate_operation(method,url)
         redirect=z.Client("fake",lambda req,timeout: Response(url="https://evil.test/x"))
         with self.assertRaises(z.Stop): redirect.request("GET",z.BASE+"/deposit/depositions/7")
+        unexpected_path=z.Client("fake",lambda req,timeout: Response(url=z.BASE+"/vocabularies/unexpected?q=MIT&size=10"))
+        with self.assertRaises(z.Stop): unexpected_path.request("GET",z.BASE+"/vocabularies/licenses?q=MIT&size=10")
+    def test_license_preflight_current_endpoint_and_failure_gate(self):
+        payload=json.dumps({"hits":{"hits":[{"id":"mit","props":{"scheme":"spdx"}}]}}).encode()
+        calls=[]
+        def opener(req,timeout): calls.append(req.full_url); return Response(payload,req.full_url)
+        z.Client("fake",opener).license_preflight()
+        self.assertEqual(calls,[z.BASE+"/vocabularies/licenses?q=MIT&size=10"])
+        missing=z.Client("fake",lambda req,timeout: Response(b'{"hits":{"hits":[]}}',req.full_url))
+        with self.assertRaisesRegex(z.Stop,"MIT license preflight failed"): missing.license_preflight()
+        c=FakeClient(); c.license_preflight=lambda: (_ for _ in ()).throw(z.Stop("preflight failed"))
+        with self.assertRaises(z.Stop): z.execute(c,"CREATE","CREATE_SANDBOX_DRAFT","",{"metadata":{}},Path(__file__))
+        self.assertNotIn("POST",c.calls)
     def test_http_failures_and_bounded_429(self):
         for code in (403,404,409):
             def opener(req,timeout,code=code): raise HTTPError(req.full_url,code,"x",{},io.BytesIO())

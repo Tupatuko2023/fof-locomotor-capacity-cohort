@@ -39,14 +39,14 @@ class Client:
         draft=r"/api/deposit/depositions/[0-9]+"
         allowed=False
         if method=="GET":
-            allowed=(path=="/api/licenses" and query=="q=MIT&size=10") or bool(re.fullmatch(draft+r"(?:/files)?",path))
+            allowed=(path=="/api/vocabularies/licenses" and query=="q=MIT&size=10") or bool(re.fullmatch(draft+r"(?:/files)?",path))
         elif method=="POST": allowed=path=="/api/deposit/depositions" and not query
         elif method=="PUT":
             allowed=(bool(re.fullmatch(draft,path)) and content_type=="application/json") or (bool(re.fullmatch(r"/api/files/[A-Za-z0-9-]+/"+re.escape(BUNDLE_NAME),path)) and content_type=="application/octet-stream")
         elif method=="DELETE": allowed=bool(re.fullmatch(draft+r"/files/[A-Za-z0-9-]+",path)) and not query
         if not allowed: raise Stop("HTTP operation is outside the Sandbox draft-only allowlist")
     def license_preflight(self):
-        result=self.request("GET",f"{BASE}/licenses/?q=MIT&size=10")
+        result=self.request("GET",f"{BASE}/vocabularies/licenses?q=MIT&size=10")
         hits=result.get("hits",{}).get("hits",[]) if result else []
         if not any(item.get("id")=="mit" and item.get("props",{}).get("scheme")=="spdx" for item in hits):
             raise Stop("MIT license preflight failed")
