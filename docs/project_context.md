@@ -172,15 +172,38 @@ validation_environment_context:
   available_environments:
     - git available during bootstrap inspection
     - Rscript available during bootstrap inspection
+    - Ubuntu 26.04 PROOT approved for render validation
   known_unavailable_capabilities:
-    - quarto CLI not found in PATH during bootstrap inspection
+    - quarto CLI not found in native Termux PATH during bootstrap inspection
   environment_specific_limitations:
-    - Quarto render cannot be validated in the current PATH
+    - native Termux cannot perform Quarto render validation with its current PATH
     - chair-rise semantics are resolved for the bounded A1/K50 contract; broader use remains scope-bound
     - renv activation is not active because renv/activate.R was not present during R test startup
+  approved_render_validation_environment:
+    environment: Ubuntu 26.04 PROOT
+    validation_status: APPROVED_FOR_RENDER_VALIDATION
+    quarto_version: 1.9.38
+    r_version: 4.5.2
+    render_packages:
+      knitr: 1.51
+      rmarkdown: 2.30
+    dependency_authority: DESCRIPTION
+    active_renv: false
+    required_evidence:
+      - repository revision and render command
+      - Ubuntu, Quarto, R and render-package versions
+      - synthetic-only input declaration
+      - output and side-effect manifest
+      - render result and cleanup result
+    expected_side_effects:
+      - configured render output
+      - ignored .quarto cache and temporary artifacts
+    cleanup_expectation: generated render artifacts are classified and removed when not retained by an approved output policy
 ```
 
-Tool availability does not imply permission. Unavailable validation tools are limitations, not PASS evidence.
+Tool availability does not imply permission. Ubuntu PROOT approval is limited
+to synthetic-only render validation and does not authorize protected-data use,
+dependency changes, publication or release.
 
 ## 10. Explicit Exclusions
 
@@ -291,7 +314,6 @@ Validation or acceptance claim.
 - Source contents and artifact classification/disposition outside the bounded migrated K50 payload.
 - Approved execution `allowed_paths` and `forbidden_paths`.
 - Approved protected analysis environment.
-- Quarto CLI availability in the intended validation environment.
 - `renv` activation and dependency-lock status.
 - Publication review authority and final manuscript/supplement scope.
 - SCI-03C canonical meaning, due to a conflict between README and the normative closeout wording.
@@ -346,8 +368,17 @@ current_state:
   chair_rise_semantics: resolved for the bounded A1/K50 contract
   dependency_authority: DESCRIPTION
   active_renv_environment: false
-  current_environment_quarto: unavailable
-  historical_quarto_evidence: PASS in a compatible Ubuntu PRoot environment
+  native_termux_quarto: unavailable
+  ubuntu_proot_quarto:
+    version: 1.9.38
+    status: available_and_smoke_tested
+    validation_status: APPROVED_FOR_RENDER_VALIDATION
+    ubuntu_version: 26.04
+    r_version: 4.5.2
+    knitr_version: 1.51
+    rmarkdown_version: 2.30
+    evidence_policy: versions, repository revision, command, synthetic-only declaration, side-effect manifest, result and cleanup
+  render_side_effect_policy: expected outputs and ignored caches are allowed when classified, bounded and safely cleanable; unexpected tracked source changes are not allowed
   target_license: MIT
   formal_software_release: not_performed
   git_tag_v0_1_0: not_created

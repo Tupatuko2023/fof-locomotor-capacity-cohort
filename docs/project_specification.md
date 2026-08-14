@@ -657,7 +657,7 @@ analysis_output_requirements:
   limitations_that_must_be_reported:
     - public repository does not contain restricted participant-level data
     - full numerical reproducibility requires approved restricted environment
-    - Quarto unavailable in current PATH
+    - Quarto unavailable in native Termux PATH; approved synthetic-only render validation uses Ubuntu PROOT
     - chair-rise reverse-coding formula unresolved
   outputs_requiring_separate_review_before_acceptance_or_publication:
     - tables
@@ -672,16 +672,37 @@ This Specification does not modify manuscript conclusions, statistical interpret
 
 ```yaml
 tool_agent_environment_constraints:
-  approved_runtime_environment_or_class: NEEDS_VERIFICATION
+  approved_runtime_environment_or_class: Ubuntu 26.04 PROOT for synthetic-only render validation
   observed_local_tools:
     - git available during inspection
     - Rscript available during inspection
+    - Ubuntu PROOT provides Quarto 1.9.38 and R 4.5.2
   required_local_or_ci_validation_tools:
     - git
     - Rscript
     - quarto when render validation is in scope
   unavailable_tools_and_impact:
-    - quarto CLI not found in current PATH; Quarto render cannot be claimed PASS in this environment
+    - quarto CLI not found in native Termux PATH; native Termux cannot claim Quarto render PASS
+  approved_render_validation_environment:
+    status: APPROVED_FOR_RENDER_VALIDATION
+    environment: Ubuntu 26.04 PROOT
+    quarto_version: 1.9.38
+    r_version: 4.5.2
+    render_package_versions:
+      knitr: 1.51
+      rmarkdown: 2.30
+    dependency_authority: DESCRIPTION
+    active_renv: false
+    required_version_evidence:
+      - Ubuntu release
+      - Quarto, R, knitr and rmarkdown versions
+      - availability of dependencies declared in DESCRIPTION
+    required_execution_evidence:
+      - repository revision and render command
+      - synthetic-only input declaration
+      - output and side-effect manifest
+      - render result and cleanup result
+    side_effect_policy: expected render outputs and ignored caches may be generated when bounded, classified and safely cleanable; unexpected tracked source changes are prohibited
   agent_access_boundaries:
     - target repository read/write only within approved work packages
     - no protected-data access
@@ -698,7 +719,6 @@ tool_agent_environment_constraints:
   tool_or_environment_items_marked_NEEDS_VERIFICATION:
     - approved protected analysis environment
     - approved dependency update policy
-    - Quarto availability in intended validation environment
     - `renv` activation and lockfile status
 ```
 
@@ -853,7 +873,6 @@ conflict. Items outside that bounded closeout retain their recorded state.
 - Production WIDE authoritative lock/input authority.
 - Protected-environment WIDE validation.
 - Approved protected analysis environment.
-- Quarto availability in intended validation environment.
 - `renv` activation and dependency-lock status.
 - Publication target, output scope and disclosure review authority.
 - Project Specification review cadence.
@@ -992,8 +1011,17 @@ canonical_current_state:
   reproducibility_environment:
     dependency_authority: DESCRIPTION
     active_renv: false
-    current_environment_quarto: unavailable
-    compatible_environment_quarto_evidence: PASS
+    native_termux_quarto: unavailable
+    ubuntu_proot:
+      ubuntu_version: 26.04
+      quarto_version: 1.9.38
+      r_version: 4.5.2
+      knitr_version: 1.51
+      rmarkdown_version: 2.30
+      smoke_render: PASS
+      validation_status: APPROVED_FOR_RENDER_VALIDATION
+      evidence_policy: versions, repository revision, command, synthetic-only declaration, side-effect manifest, result and cleanup
+    render_side_effect_policy: expected outputs and ignored caches are allowed when classified, bounded and safely cleanable; unexpected tracked source changes are not allowed
     protected_analysis_environment: NEEDS_VERIFICATION
   publication:
     metadata_candidate_on_main: true
