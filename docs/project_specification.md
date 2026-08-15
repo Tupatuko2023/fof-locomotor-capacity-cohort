@@ -119,14 +119,14 @@ source_of_truth_inputs:
     - docs/project_context.md: accepted A1 Project Context instance
   verified_repository_authority:
     - README.md
-    - AGENTS.md
+    - local-only AGENTS.md retained as workspace guidance; tracked transition pending an approved staging and commit gate
     - docs/restricted_data_policy.md
     - docs/reproducibility_scope.md
     - data/README.md
     - .gitignore
     - DESCRIPTION
     - _quarto.yml
-  faro1_knowledge_authority:
+  local_only_faro1_knowledge_provenance:
     - KB_INDEX.md
     - PROJECT_SPECIFICATION_TEMPLATE.md
     - SAFETY_PRIVACY_GUARDRAILS.md
@@ -149,6 +149,14 @@ pinning and source path existence. They do not approve migration, copying,
 artifact eligibility, dependency closure, privacy/provenance, migration strategy,
 scientific equivalence or source-data safety. Unverified candidate inputs are not
 binding project authority.
+
+FARO1/GPT and agent guidance is approved for local-only use and is not a
+runtime, test, curated-bundle or future release-tree dependency. The ten files
+approved for this transition remain tracked until a separate staging and
+commit Hard Gate removes them from the future repository state. References to
+them below retain historical governance and decision provenance; the accepted
+public Project Context and Specification are the repository-level authorities.
+Earlier Git history remains public and is not rewritten.
 
 ## 4. Scope and Non-Goals
 
@@ -801,7 +809,7 @@ decision_date: 2026-08-10
 project_authorities:
   - accepted and validated docs/project_context.md
   - accepted and validated docs/project_specification.md
-  - applicable FARO1 Knowledge routed through KB_INDEX.md
+  - applicable local-only FARO1 Knowledge routed through KB_INDEX.md as historical governance provenance
 activation_scope:
   - read-only target-repository inspection
   - documentation and planning within separately approved bounded Work Packages
@@ -958,25 +966,25 @@ stage, commit, push, or release artifacts.
 Typed dependency relationships:
 
 ```text
-KB_INDEX.md
+local-only KB_INDEX.md
   routes-to -> PROJECT_SPECIFICATION_TEMPLATE.md for project specification structure
 
 docs/project_context.md
   informs -> docs/project_specification.md
 
-PROJECT_SPECIFICATION_TEMPLATE.md
+local-only PROJECT_SPECIFICATION_TEMPLATE.md
   structures -> docs/project_specification.md
 
-SAFETY_PRIVACY_GUARDRAILS.md
+local-only SAFETY_PRIVACY_GUARDRAILS.md
   constrains -> data, privacy, protected-data and publication requirements
 
-TOOL_AND_AGENT_POLICY.md
+local-only TOOL_AND_AGENT_POLICY.md
   constrains -> tool, command, network, Git and agent boundaries
 
-EVIDENCE_REVIEW_AND_ACCEPTANCE.md
+local-only EVIDENCE_REVIEW_AND_ACCEPTANCE.md
   constrains -> evidence, review, validation and acceptance gates
 
-RESEARCH_REPOSITORY_PATTERNS.md
+local-only RESEARCH_REPOSITORY_PATTERNS.md
   informs -> migration patterns without authorizing execution
 ```
 
@@ -986,7 +994,7 @@ pull request, release, publication, disclosure, data egress, or retention.
 
 ## 16. Canonical Current-State Alignment
 
-This section is the active project-state summary as of 2026-08-14. It
+This section is the active project-state summary as of 2026-08-15. It
 supersedes earlier planning-state fields only where later accepted decisions,
 completed Git history or validated repository evidence establish the current
 value. It does not rewrite migration-time provenance or create new scientific
@@ -1051,9 +1059,14 @@ canonical_current_state:
     registration_control: registered_active_not_dispatched
     zenodo_workflow: registered_active_and_validated
   repository_hygiene:
-    tracked_gpt_material: FARO1 knowledge baseline files
-    untracked_gpt_material: local orchestration and audit material
-    agents_md: tracked_public
+    gpt_release_boundary: local_only
+    gpt_transition_state: nine FARO1 knowledge files remain tracked pending a separately approved staging and commit gate
+    gpt_local_disposition: preserve all local copies; do not delete
+    untracked_gpt_material: local orchestration and audit material remains out of release scope
+    agents_md_release_boundary: local_only
+    agents_md_transition_state: tracked pending a separately approved staging and commit gate
+    agents_md_local_disposition: preserve local copy; do not delete
+    history: prior public Git history is retained without rewrite
     zenodo_bundle_excludes_gpt_and_agents: true
   execution_authority:
     permanent_allowed_paths: none
@@ -1072,5 +1085,5 @@ Open governance and release items remain:
 - final manuscript/supplement boundary and disclosure authority;
 - steward and review cadence;
 - `SCI-SEM-COHORT`, `RET-01` and the SCI-03C conflict;
-- AI-assistance disclosure and GPT/AGENTS release hygiene;
+- AI-assistance disclosure;
 - any future `renv` adoption, which requires a separate architecture decision.
