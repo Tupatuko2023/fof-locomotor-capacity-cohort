@@ -17,11 +17,22 @@ def mutate_xlsx(target, replacements=None, extra=None, remove=None):
 
 class BundleTests(unittest.TestCase):
     def test_exact_allowlist_real_build_and_hashes(self):
-        self.assertEqual(len(b.ALLOWLIST),31); self.assertEqual(len(b.ALLOWLIST),len(set(b.ALLOWLIST)))
+        self.assertEqual(len(b.ALLOWLIST),33); self.assertEqual(len(b.ALLOWLIST),len(set(b.ALLOWLIST)))
+        self.assertIn("docs/project_specification.md",b.ALLOWLIST)
+        self.assertIn("docs/v0.1.0_release_runbook.md",b.ALLOWLIST)
         with tempfile.TemporaryDirectory() as td:
             bundle,digest=b.build(ROOT,Path(td)); self.assertEqual(digest,b.sha256(bundle)); b.verify_archive(bundle)
             with zipfile.ZipFile(bundle) as a:
-                self.assertEqual(set(a.namelist()),set(b.ALLOWLIST+b.GENERATED)); self.assertEqual(len(a.read("SHA256SUMS").decode().splitlines()),31)
+                self.assertEqual(set(a.namelist()),set(b.ALLOWLIST+b.GENERATED)); self.assertEqual(len(a.read("SHA256SUMS").decode().splitlines()),33)
+    def test_recursive_markdown_link_closure(self):
+        markdown={name:(ROOT/name).read_text() for name in b.ALLOWLIST if name.endswith(".md")}
+        b.validate_markdown_link_closure(markdown,set(b.ALLOWLIST))
+        with self.assertRaisesRegex(ValueError,"outside the curated bundle"):
+            b.validate_markdown_link_closure({"README.md":"[missing](docs/missing.md)"},{"README.md"})
+        b.validate_markdown_link_closure(
+            {"README.md":"[section](#section) [web](https://example.test/doc) [mail](mailto:test@example.test)"},
+            {"README.md"},
+        )
     def test_source_path_suffix_secret_and_symlink_rejections(self):
         for bad in ("../x","/x","GPT/x","outputs/x","AGENTS.md","safe/data.rds","safe/key.pem"):
             with self.assertRaises(ValueError): b.safe_member(bad)

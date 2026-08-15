@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import posixpath
 from pathlib import Path, PurePosixPath
 import re
 import tempfile
+from urllib.parse import unquote, urlsplit
 import zipfile
 import xml.etree.ElementTree as ET
 
@@ -28,8 +30,9 @@ ALLOWLIST = (
     "tests/testthat.R", "tests/testthat/test_k50_synthetic_wide_test_control.R",
     "tests/testthat/test_public_traceability_demo.R",
     "tests/testthat/test_transform_locomotor_indicators.R",
-    "docs/k50_migration_provenance.md", "docs/reproducibility_scope.md",
-    "docs/restricted_data_policy.md",
+    "docs/k50_migration_provenance.md", "docs/project_specification.md",
+    "docs/reproducibility_scope.md", "docs/restricted_data_policy.md",
+    "docs/v0.1.0_release_runbook.md",
 )
 GENERATED = ("manifest.txt", "SHA256SUMS")
 XLSX_PATH = ALLOWLIST[18]
@@ -37,6 +40,7 @@ FORBIDDEN_PREFIXES = ("GPT/", ".git/", "outputs/", "data/raw/", "data/restricted
 FORBIDDEN_NAMES = {"AGENTS.md", ".env", ".RData", ".Rhistory"}
 FORBIDDEN_SUFFIXES = {".rds", ".rda", ".rdata", ".sqlite", ".db", ".mdb", ".accdb", ".parquet", ".feather", ".sav", ".dta", ".sas7bdat", ".zip", ".tar", ".gz", ".7z", ".env", ".key", ".pem", ".p12", ".pfx"}
 SECRET_RE = re.compile(rb"(?i)(authorization\s*:\s*bearer\s+\S+|(?:github|ghp|zenodo|aws)[_-]?(?:access[_-]?)?(?:token|key|secret)\s*[=:]\s*\S+|-----BEGIN [A-Z ]*PRIVATE KEY-----|aws_access_key_id\s*[=:]\s*\S+|aws_secret_access_key\s*[=:]\s*\S+|(?:secret|token|password)\s*[=:]\s*['\"]?[^\s'\"$<{]{4,})")
+MARKDOWN_LINK_RE = re.compile(r"!?\[[^]]*\]\(([^)]+)\)")
 XLSX_MEMBERS = {"[Content_Types].xml", "_rels/.rels", "docProps/core.xml", "docProps/app.xml", "xl/workbook.xml", "xl/_rels/workbook.xml.rels", "xl/worksheets/sheet1.xml"}
 XLSX_ROWS = [("id", "ssn")] + [(f"SYN-K50-{i:03d}", f"SYNLOOKUPKEY{i:03d}") for i in range(1, 5)]
 XLSX_SHA256 = "86d90c707bf5fc927fddfc86dc19067440feda36e17beb6e0f8ba3d16c260058"
@@ -101,7 +105,35 @@ def validate_sources(root: Path, allowlist=ALLOWLIST) -> None:
         raise ValueError("allowlist differs from approved exact manifest")
     for name in allowlist:
         validate_source_file(name, root / name)
+    markdown = {
+        name: (root / name).read_text(encoding="utf-8")
+        for name in allowlist if PurePosixPath(name).suffix.lower() == ".md"
+    }
+    validate_markdown_link_closure(markdown, set(allowlist))
     validate_xlsx(root / XLSX_PATH)
+
+def validate_markdown_link_closure(markdown: dict[str, str], members: set[str]) -> None:
+    for source, content in markdown.items():
+        for match in MARKDOWN_LINK_RE.finditer(content):
+            destination = match.group(1).strip()
+            if destination.startswith("<") and ">" in destination:
+                destination = destination[1:destination.index(">")]
+            else:
+                destination = destination.split(maxsplit=1)[0]
+            parsed = urlsplit(destination)
+            if parsed.scheme or parsed.netloc:
+                if parsed.scheme.lower() not in {"http", "https", "mailto"}:
+                    raise ValueError(f"unsupported Markdown link scheme in {source}: {destination}")
+                continue
+            if not parsed.path:
+                continue
+            path = unquote(parsed.path)
+            if path.startswith(("/", "\\")) or "\\" in path:
+                raise ValueError(f"unsafe Markdown link in {source}: {destination}")
+            target = posixpath.normpath((PurePosixPath(source).parent / path).as_posix())
+            safe_member(target)
+            if target not in members:
+                raise ValueError(f"Markdown link target is outside the curated bundle: {source} -> {target}")
 
 def validate_source_file(name: str, path: Path) -> None:
     safe_member(name)
@@ -135,6 +167,11 @@ def verify_archive(bundle: Path) -> None:
             safe_member(info.filename)
             if (info.external_attr >> 16) & 0o170000 == 0o120000: raise ValueError("symlink in archive")
         if archive.read("manifest.txt").decode().splitlines() != list(ALLOWLIST): raise ValueError("embedded manifest mismatch")
+        markdown = {
+            name: archive.read(name).decode("utf-8")
+            for name in ALLOWLIST if PurePosixPath(name).suffix.lower() == ".md"
+        }
+        validate_markdown_link_closure(markdown, set(names))
         recorded = dict(line.split("  ", 1)[::-1] for line in archive.read("SHA256SUMS").decode().splitlines())
         for name in ALLOWLIST:
             if hashlib.sha256(archive.read(name)).hexdigest() != recorded.get(name): raise ValueError(f"checksum mismatch: {name}")
