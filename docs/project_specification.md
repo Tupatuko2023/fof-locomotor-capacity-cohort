@@ -119,7 +119,7 @@ source_of_truth_inputs:
     - docs/project_context.md: accepted A1 Project Context instance
   verified_repository_authority:
     - README.md
-    - local-only AGENTS.md retained as workspace guidance; tracked transition pending an approved staging and commit gate
+    - local-only AGENTS.md retained as workspace guidance; removal from the current tracked tree is complete
     - docs/restricted_data_policy.md
     - docs/reproducibility_scope.md
     - data/README.md
@@ -151,11 +151,11 @@ scientific equivalence or source-data safety. Unverified candidate inputs are no
 binding project authority.
 
 FARO1/GPT and agent guidance is approved for local-only use and is not a
-runtime, test, curated-bundle or future release-tree dependency. The ten files
-approved for this transition remain tracked until a separate staging and
-commit Hard Gate removes them from the future repository state. References to
-them below retain historical governance and decision provenance; the accepted
-public Project Context and Specification are the repository-level authorities.
+runtime, test, curated-bundle or future release-tree dependency. Removal of the
+ten approved files from the current tracked tree is complete; local copies are
+preserved outside the release boundary. References to them below retain
+historical governance and decision provenance; the accepted public Project
+Context and Specification are the repository-level authorities.
 Earlier Git history remains public and is not rewritten.
 
 ## 4. Scope and Non-Goals
@@ -1060,11 +1060,11 @@ canonical_current_state:
     zenodo_workflow: registered_active_and_validated
   repository_hygiene:
     gpt_release_boundary: local_only
-    gpt_transition_state: nine FARO1 knowledge files remain tracked pending a separately approved staging and commit gate
+    gpt_transition_state: migration complete; no GPT path is present in the current tracked tree
     gpt_local_disposition: preserve all local copies; do not delete
     untracked_gpt_material: local orchestration and audit material remains out of release scope
     agents_md_release_boundary: local_only
-    agents_md_transition_state: tracked pending a separately approved staging and commit gate
+    agents_md_transition_state: migration complete; AGENTS.md is not present in the current tracked tree
     agents_md_local_disposition: preserve local copy; do not delete
     history: prior public Git history is retained without rewrite
     zenodo_bundle_excludes_gpt_and_agents: true

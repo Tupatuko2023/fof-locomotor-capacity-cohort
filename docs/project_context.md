@@ -80,7 +80,7 @@ The observed candidate working areas are repository-structure facts only. They a
 source_context:
   approved_source_categories:
     - target repository README.md
-    - local-only AGENTS.md retained as workspace guidance; tracked transition pending an approved staging and commit gate
+    - local-only AGENTS.md retained as workspace guidance; removal from the current tracked tree is complete
     - target repository docs/restricted_data_policy.md
     - target repository docs/reproducibility_scope.md
     - target repository .gitignore
@@ -104,11 +104,11 @@ source_context:
 ```
 
 FARO1/GPT and agent guidance is approved for local-only use and is not a
-runtime, test, curated-bundle or future release-tree dependency. The ten files
-approved for this transition remain tracked until a separate staging and
-commit Hard Gate removes them from the future repository state. Earlier Git
-history remains public and is not rewritten. Other local notes in `GPT/` may
-contain candidate claims, but they are not accepted project authority here.
+runtime, test, curated-bundle or future release-tree dependency. Removal of the
+ten approved files from the current tracked tree is complete; local copies are
+preserved outside the release boundary. Earlier Git history remains public and
+is not rewritten. Other local notes in `GPT/` may contain candidate claims, but
+they are not accepted project authority here.
 
 ## 6. Data Context
 
@@ -413,14 +413,14 @@ current_state:
   permanent_execution_allowed_paths: none
   gpt_material:
     release_boundary: local_only
-    current_transition_state: nine FARO1 knowledge files remain tracked pending a separately approved staging and commit gate
+    current_transition_state: migration complete; no GPT path is present in the current tracked tree
     local_disposition: preserve all local copies; do not delete
     untracked_local: orchestration prompts, audit and working material remain out of release scope
     history: prior public Git history is retained without rewrite
     zenodo_bundle: excluded
   agents_md:
     release_boundary: local_only
-    current_transition_state: tracked pending a separately approved staging and commit gate
+    current_transition_state: migration complete; AGENTS.md is not present in the current tracked tree
     local_disposition: preserve local copy; do not delete
     history: prior public Git history is retained without rewrite
     zenodo_bundle: excluded

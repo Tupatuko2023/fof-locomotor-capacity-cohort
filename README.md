@@ -183,12 +183,20 @@ authority. The release-facing draft identifies Tomi Korpi as the software
 creator and version `0.1.0` as the planned first archival software release.
 
 No Zenodo DOI has yet been published. The cohort software is intended to have a
-separate archival software record from the dissertation, subject to later
-Sandbox testing, release review, explicit human publication approval, and DOI
-verification.
+separate archival software record from the dissertation, subject to release
+review, explicit human publication approval, and DOI verification. The Zenodo
+Sandbox draft is validation evidence only and is not a citation target.
 
 ## Release status
 
-Version `0.1.0` is a release-candidate metadata draft prepared for internal and
-BMC Geriatrics/domain-expert review. It is not yet a Git tag, GitHub Release,
-Zenodo record, or published DOI.
+The draft-only Zenodo Sandbox pipeline is `COMPLETE / VALIDATED`. Unpublished,
+unsubmitted Sandbox draft `587120` is retained solely as end-to-end validation
+evidence. It is not the formal `v0.1.0` software release.
+
+Version `0.1.0` remains unpublished: no `v0.1.0` Git tag or GitHub Release has
+been created, and no Production Zenodo record or DOI has been published.
+Production Zenodo is outside this release scope. The planned release is an
+independent synthetic-only research-software release, not a manuscript,
+supplement, or scientific-results publication. See the
+[v0.1.0 release runbook](docs/v0.1.0_release_runbook.md) for the gated release
+procedure.
