@@ -9,7 +9,7 @@ status: approved
 document_evidence_state: validated
 project_name: fof-locomotor-capacity-cohort
 project_short_name: A1
-project_phase: bounded Project Mode; K50 migration and scientific-phase closeout complete; pre-release validation active
+project_phase: bounded Project Mode; K50 migration and scientific-phase closeout complete; post-release maintenance active
 review_authority: User / designated project owner
 ```
 
@@ -19,7 +19,7 @@ review_authority: User / designated project owner
 project_identity:
   project_name: fof-locomotor-capacity-cohort
   project_short_name: A1
-  project_phase: bounded Project Mode; K50 migration and scientific-phase closeout complete; pre-release validation active
+  project_phase: bounded Project Mode; K50 migration and scientific-phase closeout complete; post-release maintenance active
   mission_or_goal: >
     Document a 12-month fear-of-falling and locomotor-capacity cohort
     analysis pipeline with public structural and rendering reproducibility
@@ -135,7 +135,7 @@ publication_context:
     Public scaffold repository for structural and rendering reproducibility
     with public materials; full numerical reproduction requires an approved
     restricted environment.
-  publication_target_known: planned archival software release v0.1.0; formal release not performed
+  publication_target_known: archival software release v0.1.0 published on GitHub 2026-08-15; Production Zenodo and DOI not published
   repository_role_relative_to_publication: >
     Supports transparent pipeline documentation and public reproducibility
     scaffolding, not final analytical results.
@@ -340,7 +340,7 @@ This context is not an active Project Specification, Migration Contract, source-
 
 ## 16. Canonical Current-State Alignment
 
-This section is the active current-state record as of 2026-08-15. It
+This section is the active current-state record as of 2026-08-17. It
 supersedes earlier bootstrap and planning statements only where they describe
 an item below as unresolved or not yet performed. Historical Owner decisions
 and migration-time evidence remain historical records and are not rewritten.
@@ -370,10 +370,16 @@ current_state:
     evidence_policy: versions, repository revision, command, synthetic-only declaration, side-effect manifest, result and cleanup
   render_side_effect_policy: expected outputs and ignored caches are allowed when classified, bounded and safely cleanable; unexpected tracked source changes are not allowed
   target_license: MIT
-  release_candidate_scope: v0.1.0 is an independent synthetic-only research-software release candidate, not a manuscript, supplement or scientific-results release
-  formal_software_release: not_performed
-  git_tag_v0_1_0: not_created
-  github_release: not_created
+  release_scope: v0.1.0 is a published independent synthetic-only research-software release, not a manuscript, supplement or scientific-results release
+  formal_software_release: performed_on_github
+  git_tag_v0_1_0:
+    state: published_annotated
+    target_commit: 63f00831c0c9cc5a8d7fad1c705922d1afe084af
+  github_release:
+    state: published
+    published_at: 2026-08-15T08:48:49Z
+    asset: fof-locomotor-capacity-cohort-0.1.0.zip
+    asset_sha256: 9b70b06d6e7dd729a73f6fa20667f6610fbd4c029aa551ba3f0282b70c6fec81
   production_zenodo_record: not_created
   production_zenodo_authorized: false
   github_actions:
@@ -412,5 +418,6 @@ The following remain open and are not promoted by this alignment:
 - steward and review cadence;
 - AI-assistance disclosure.
 
-This alignment makes no numerical-parity, clinical-validity, publication,
-disclosure, retention, DOI or protected-data claim.
+This alignment makes no numerical-parity, clinical-validity, manuscript or
+scientific-results publication, disclosure, retention, DOI or protected-data
+claim beyond the bounded GitHub software-release facts recorded above.

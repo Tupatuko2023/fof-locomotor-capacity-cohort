@@ -971,7 +971,7 @@ pull request, release, publication, disclosure, data egress, or retention.
 
 ## 16. Canonical Current-State Alignment
 
-This section is the active project-state summary as of 2026-08-15. It
+This section is the active project-state summary as of 2026-08-17. It
 supersedes earlier planning-state fields only where later accepted decisions,
 completed Git history or validated repository evidence establish the current
 value. It does not rewrite migration-time provenance or create new scientific
@@ -979,7 +979,7 @@ authority.
 
 ```yaml
 canonical_current_state:
-  project_phase: bounded Project Mode; pre-release validation
+  project_phase: bounded Project Mode; post-release maintenance
   target_repository_role: public research-software repository with synthetic-only public validation
   migration:
     required: yes
@@ -1014,10 +1014,16 @@ canonical_current_state:
     protected_analysis_environment: NEEDS_VERIFICATION
   publication:
     metadata_candidate_on_main: true
-    release_candidate_scope: v0.1.0 is an independent synthetic-only research-software release candidate, not a manuscript, supplement or scientific-results release
-    formal_release: not_performed
-    tag_v0_1_0: not_created
-    github_release: not_created
+    release_scope: v0.1.0 is a published independent synthetic-only research-software release, not a manuscript, supplement or scientific-results release
+    formal_release: performed_on_github
+    tag_v0_1_0:
+      state: published_annotated
+      target_commit: 63f00831c0c9cc5a8d7fad1c705922d1afe084af
+    github_release:
+      state: published
+      published_at: 2026-08-15T08:48:49Z
+      asset: fof-locomotor-capacity-cohort-0.1.0.zip
+      asset_sha256: 9b70b06d6e7dd729a73f6fa20667f6610fbd4c029aa551ba3f0282b70c6fec81
     production_zenodo: not_created
     doi: not_published
     manuscript_supplement_boundary: NEEDS_VERIFICATION

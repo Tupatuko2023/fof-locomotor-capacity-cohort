@@ -38,9 +38,10 @@ The A1/K50 scientific phase is
 `CLOSED_WITH_DEFERRED_SCIENTIFIC_ITEMS — PUBLISHED`. Here, `PUBLISHED` is an
 internal project-status label recording that the closeout documentation was
 published to the repository. It does not mean that the study, manuscript,
-software release, or DOI has been published. Technical execution met the
-current internal closeout criteria. The protected scientific review was
-completed with explicitly deferred scientific items.
+software release, or DOI has been published; those publication states are
+recorded separately below. Technical execution met the current internal
+closeout criteria. The protected scientific review was completed with
+explicitly deferred scientific items.
 `PARITY-OBJECTIVE-01` uses Option A: structural and methodological conformity
 plus protected scientific review.
 
@@ -179,8 +180,8 @@ data or results.
 ## Citation
 
 [CITATION.cff](CITATION.cff) is the current software citation metadata
-authority. The release-facing draft identifies Tomi Korpi as the software
-creator and version `0.1.0` as the planned first archival software release.
+authority. It identifies Tomi Korpi as the software creator and version
+`0.1.0` as the first archival software release.
 
 No Zenodo DOI has yet been published. The cohort software is intended to have a
 separate archival software record from the dissertation, subject to release
@@ -193,10 +194,12 @@ The draft-only Zenodo Sandbox pipeline is `COMPLETE / VALIDATED`. Unpublished,
 unsubmitted Sandbox draft `587120` is retained solely as end-to-end validation
 evidence. It is not the formal `v0.1.0` software release.
 
-Version `0.1.0` remains unpublished: no `v0.1.0` Git tag or GitHub Release has
-been created, and no Production Zenodo record or DOI has been published.
-Production Zenodo is outside this release scope. The planned release is an
+Version `0.1.0` was published as a GitHub Release on 2026-08-15. Its annotated
+`v0.1.0` tag resolves to commit
+`63f00831c0c9cc5a8d7fad1c705922d1afe084af`, and the published curated ZIP has
+SHA-256 `9b70b06d6e7dd729a73f6fa20667f6610fbd4c029aa551ba3f0282b70c6fec81`.
+No Production Zenodo record or DOI has been published. The release is an
 independent synthetic-only research-software release, not a manuscript,
-supplement, or scientific-results publication. See the
-[v0.1.0 release runbook](docs/v0.1.0_release_runbook.md) for the gated release
-procedure.
+supplement, or scientific-results publication. The
+[v0.1.0 release runbook](docs/v0.1.0_release_runbook.md) is the completed,
+historical procedure for that release and must not be rerun for `v0.1.0`.
