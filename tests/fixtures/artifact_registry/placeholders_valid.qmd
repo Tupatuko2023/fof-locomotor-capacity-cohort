@@ -1,0 +1,2 @@
+Synthetic demonstration reference:
+{{artifact:TEST-FIG-SYNTH-01|use=synthetic_demo}}

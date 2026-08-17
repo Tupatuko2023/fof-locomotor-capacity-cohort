@@ -1,0 +1,2 @@
+Unknown synthetic demonstration reference:
+{{artifact:TEST-FIG-UNKNOWN-01|use=synthetic_demo}}

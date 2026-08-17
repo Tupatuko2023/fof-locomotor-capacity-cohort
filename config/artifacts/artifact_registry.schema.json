@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/a1/artifact_registry.schema.json",
+  "title": "A1 public artifact registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registry_status", "project_id", "artifacts"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "registry_status": {"enum": ["DESIGN_SCAFFOLD", "ACTIVE", "RETIRED"]},
+    "project_id": {"const": "A1"},
+    "artifacts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/artifact"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "git_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "safe_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+){2,}$"},
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["PLANNED", "EXISTS", "NOT_REQUIRED"]},
+        "path": {"type": "string"},
+        "repository_revision": {"$ref": "#/$defs/git_sha"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "EXISTS"}}, "required": ["status"]},
+          "then": {"required": ["path", "repository_revision", "sha256"]}
+        }
+      ]
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id", "artifact_revision", "provisional", "artifact_type",
+        "artifact_status", "title", "caption_status", "analysis_source",
+        "generator", "required_inputs", "data_classification",
+        "execution_environment", "protected_execution_required",
+        "scientific_approval_required", "disclosure_review_required",
+        "disclosure_state", "publication_status", "manuscript_destination",
+        "manuscript_reference_key", "provenance_required",
+        "validation_required", "supersedes"
+      ],
+      "properties": {
+        "artifact_id": {"$ref": "#/$defs/safe_id"},
+        "artifact_revision": {"type": "integer", "minimum": 1},
+        "provisional": {"type": "boolean"},
+        "artifact_type": {"enum": ["TABLE", "FIGURE", "SUPPLEMENT", "DOCUMENT", "RECEIPT"]},
+        "artifact_status": {"enum": ["DESIGN_CANDIDATE", "SYNTHETIC_CANDIDATE", "SYNTHETIC_VALIDATED", "PROTECTED_GENERATED", "PROTECTED_VALIDATED", "QUARANTINED", "SUPERSEDED", "WITHDRAWN"]},
+        "title": {"type": "string", "minLength": 1},
+        "caption_status": {"enum": ["NOT_REQUIRED", "DRAFT", "SYNTHETIC_DISCLAIMER", "APPROVED"]},
+        "analysis_source": {"type": "string", "minLength": 1},
+        "generator": {"$ref": "#/$defs/generator"},
+        "required_inputs": {"type": "array", "items": {"enum": ["PUBLIC_SYNTHETIC_INPUT", "PUBLIC_METADATA_INPUT", "PROTECTED_PARTICIPANT_INPUT_REQUIRED"]}, "uniqueItems": true},
+        "data_classification": {"enum": ["PUBLIC_METADATA", "PUBLIC_SYNTHETIC", "PROTECTED_AGGREGATE", "DISCLOSURE_APPROVED_PUBLIC"]},
+        "execution_environment": {"type": "string", "minLength": 1},
+        "protected_execution_required": {"type": "boolean"},
+        "protected_execution_reference": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]{2,}$"},
+        "scientific_approval_required": {"type": "boolean"},
+        "scientific_decision_reference": {"type": "string", "minLength": 1},
+        "disclosure_review_required": {"type": "boolean"},
+        "disclosure_state": {"enum": ["NOT_APPLICABLE_SYNTHETIC", "NOT_SUBMITTED", "PENDING", "APPROVED", "REJECTED", "WITHDRAWN"]},
+        "disclosure_decision_reference": {"type": "string", "minLength": 1},
+        "publication_status": {"enum": ["NOT_PROPOSED", "CANDIDATE", "NOT_APPROVED", "APPROVED", "PUBLISHED", "WITHDRAWN"]},
+        "publication_approval_reference": {"type": "string", "minLength": 1},
+        "candidate_output_path": {"type": "string", "minLength": 1},
+        "manuscript_destination": {"type": "string", "minLength": 1},
+        "manuscript_reference_key": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]{2,}$"},
+        "provenance_required": {"type": "boolean"},
+        "validation_required": {"type": "boolean"},
+        "validation_receipt_reference": {"type": "string", "minLength": 1},
+        "artifact_sha256": {"$ref": "#/$defs/sha256"},
+        "published_sha256": {"$ref": "#/$defs/sha256"},
+        "supersedes": {"type": ["string", "null"], "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+){2,}$"}
+      }
+    }
+  }
+}

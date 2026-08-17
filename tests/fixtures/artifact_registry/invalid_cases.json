@@ -1,0 +1,20 @@
+{
+  "synthetic_test_cases": [
+    "unknown_field",
+    "duplicate_id",
+    "duplicate_reference",
+    "bad_enum",
+    "p_value_field",
+    "n_field",
+    "participant_id_field",
+    "token_pattern",
+    "protected_path",
+    "missing_checksum",
+    "short_git_sha",
+    "disclosure_approval_without_reference",
+    "publication_before_disclosure",
+    "supersession_cycle",
+    "unknown_placeholder",
+    "synthetic_as_research_result"
+  ]
+}

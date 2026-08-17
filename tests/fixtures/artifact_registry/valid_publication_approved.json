@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "registry_status": "ACTIVE",
+  "project_id": "A1",
+  "artifacts": [{
+    "artifact_id": "TEST-TBL-PUBLIC-01",
+    "artifact_revision": 1,
+    "provisional": false,
+    "artifact_type": "TABLE",
+    "artifact_status": "PROTECTED_VALIDATED",
+    "title": "Metadata-only publication-state test",
+    "caption_status": "APPROVED",
+    "analysis_source": "Synthetic validator state test",
+    "generator": {
+      "status": "EXISTS",
+      "path": "scripts/validation/validate_artifact_registry.py",
+      "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "required_inputs": ["PROTECTED_PARTICIPANT_INPUT_REQUIRED"],
+    "data_classification": "DISCLOSURE_APPROVED_PUBLIC",
+    "execution_environment": "APPROVED_ENVIRONMENT_REFERENCE",
+    "protected_execution_required": true,
+    "protected_execution_reference": "TEST_EXECUTION_APPROVAL_01",
+    "scientific_approval_required": true,
+    "scientific_decision_reference": "TEST_SCIENTIFIC_DECISION_01",
+    "disclosure_review_required": true,
+    "disclosure_state": "APPROVED",
+    "disclosure_decision_reference": "TEST_DISCLOSURE_DECISION_01",
+    "publication_status": "APPROVED",
+    "publication_approval_reference": "TEST_PUBLICATION_DECISION_01",
+    "manuscript_destination": "TEST_RESULTS_SECTION",
+    "manuscript_reference_key": "TEST_TBL_PUBLIC_01",
+    "provenance_required": true,
+    "validation_required": true,
+    "validation_receipt_reference": "TEST_VALIDATION_RECEIPT_01",
+    "artifact_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "supersedes": null
+  }]
+}

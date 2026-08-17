@@ -1,0 +1,2 @@
+Invalid research-result reference:
+{{artifact:TEST-FIG-SYNTH-01|use=research_result}}

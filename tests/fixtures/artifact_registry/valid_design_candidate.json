@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "registry_status": "DESIGN_SCAFFOLD",
+  "project_id": "A1",
+  "artifacts": [{
+    "artifact_id": "TEST-TBL-DESIGN-01",
+    "artifact_revision": 1,
+    "provisional": true,
+    "artifact_type": "TABLE",
+    "artifact_status": "DESIGN_CANDIDATE",
+    "title": "Synthetic test design candidate",
+    "caption_status": "DRAFT",
+    "analysis_source": "Synthetic contract test only",
+    "generator": {"status": "PLANNED"},
+    "required_inputs": ["PUBLIC_SYNTHETIC_INPUT"],
+    "data_classification": "PUBLIC_METADATA",
+    "execution_environment": "NOT_EXECUTED",
+    "protected_execution_required": false,
+    "scientific_approval_required": true,
+    "disclosure_review_required": true,
+    "disclosure_state": "NOT_SUBMITTED",
+    "publication_status": "CANDIDATE",
+    "manuscript_destination": "NEEDS_VERIFICATION",
+    "manuscript_reference_key": "TEST_TBL_DESIGN_01",
+    "provenance_required": true,
+    "validation_required": true,
+    "supersedes": null
+  }]
+}
