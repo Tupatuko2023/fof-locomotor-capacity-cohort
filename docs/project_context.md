@@ -80,13 +80,12 @@ The observed candidate working areas are repository-structure facts only. They a
 source_context:
   approved_source_categories:
     - target repository README.md
-    - local-only AGENTS.md retained as workspace guidance; removal from the current tracked tree is complete
     - target repository docs/restricted_data_policy.md
     - target repository docs/reproducibility_scope.md
+    - target repository data/README.md
     - target repository .gitignore
     - target repository DESCRIPTION
     - target repository _quarto.yml
-    - local-only FARO1 Knowledge Base baseline 885c6e0 retained as historical governance provenance
     - WP-A1-SOURCE-REPOSITORY-IDENTITY-INSPECT PASS: source identity, revision and path metadata only
   source_scope_summary: >
     Target-repository scaffold context plus bounded source identity metadata.
@@ -94,31 +93,25 @@ source_context:
     closure, privacy/provenance review and migration execution have not been
     approved or performed.
   authority_or_precedence_references:
-    - local-only KB_INDEX.md
-    - local-only PROJECT_CONTEXT_TEMPLATE.md
-    - local-only SAFETY_PRIVACY_GUARDRAILS.md
-    - local-only TOOL_AND_AGENT_POLICY.md
-    - local-only EVIDENCE_REVIEW_AND_ACCEPTANCE.md
-    - local-only PROJECT_SPECIFICATION_TEMPLATE.md
-    - local-only RESEARCH_REPOSITORY_PATTERNS.md
+    - docs/project_context.md
+    - docs/project_specification.md
+    - docs/restricted_data_policy.md
+    - docs/reproducibility_scope.md
 ```
 
-FARO1/GPT and agent guidance is approved for local-only use and is not a
-runtime, test, curated-bundle or future release-tree dependency. Removal of the
-ten approved files from the current tracked tree is complete; local copies are
-preserved outside the release boundary. Earlier Git history remains public and
-is not rewritten. Other local notes in `GPT/` may contain candidate claims, but
-they are not accepted project authority here.
+Local development and governance materials are outside the runtime, test,
+curated-bundle and release-tree boundary. The accepted public Project Context
+and Project Specification are the repository-level authorities. Earlier Git
+history remains public and is not rewritten.
 
 ## 6. Data Context
 
 ```yaml
 data_context:
   applicable_classification_references:
-    - local-only SAFETY_PRIVACY_GUARDRAILS.md
-    - local-only AGENTS.md
     - docs/restricted_data_policy.md
     - data/README.md
+    - docs/project_specification.md
   restricted_data_present: unknown
   participant_level_data_in_inspected_public_repository: no per inspected repository policy and scaffold evidence
   synthetic_data_available: yes
@@ -163,7 +156,8 @@ migration_context:
   migration_requirement_status: approved and completed for the bounded K50 core
   approved_migration_strategy: provenance_preserving_copy
   project_specification_reference: docs/project_specification.md
-  repository_patterns_reference: local-only RESEARCH_REPOSITORY_PATTERNS.md retained as historical decision provenance
+  migration_authority_reference: docs/project_specification.md
+  migration_provenance_reference: docs/k50_migration_provenance.md
 ```
 
 The bounded K50 migration and its provenance are complete. Broader source
@@ -235,14 +229,13 @@ Source-grounded evidence reviewed for this draft:
 | Claim area | Source |
 |---|---|
 | Repository identity, scaffold status, missing migrated analysis/manuscript and no analytical results | `README.md` |
-| Agent safety rules, allowed synthetic data, forbidden participant data and validation commands | local-only `AGENTS.md`; not a public release-tree dependency |
+| Repository safety rules, allowed synthetic data and forbidden participant data | `docs/restricted_data_policy.md`; `data/README.md`; `docs/project_specification.md` |
 | Restricted data exclusions and synthetic validation requirement | `docs/restricted_data_policy.md` |
 | Public structural/render reproducibility and restricted-environment numerical reproducibility | `docs/reproducibility_scope.md` |
 | Ignored restricted/raw data, secrets, credentials and prohibited file types | `.gitignore` |
 | Package identity and R/testthat context | `DESCRIPTION` |
 | Quarto project output and execution configuration | `_quarto.yml` |
-| Project Context template boundary and required fields | local-only `PROJECT_CONTEXT_TEMPLATE.md`; historical governance provenance |
-| Safety, tool, evidence and migration boundaries | local-only FARO1 Knowledge Base baseline `885c6e0`; historical governance provenance |
+| Accepted project boundary and governance requirements | `docs/project_context.md`; `docs/project_specification.md` |
 
 ## 12. Owner Acceptance
 
@@ -282,7 +275,6 @@ owner_decision:
   project_authorities:
     - accepted and validated docs/project_context.md
     - accepted and validated docs/project_specification.md
-    - applicable local-only FARO1 Knowledge routed through KB_INDEX.md as historical governance provenance
   activation_scope:
     - read-only target-repository inspection
     - documentation and planning within separately approved bounded Work Packages
@@ -331,29 +323,17 @@ Validation or acceptance claim.
 
 ## 15. Dependencies and References
 
-Typed dependency relationships:
+Repository-level dependency relationships:
 
 ```text
-local-only KB_INDEX.md
-  routes-to -> PROJECT_CONTEXT_TEMPLATE.md for project context structure
+docs/project_context.md
+  informs -> docs/project_specification.md
 
-local-only PROJECT_CONTEXT_TEMPLATE.md
-  structures -> docs/project_context.md
+docs/restricted_data_policy.md and data/README.md
+  constrain -> data, privacy and protected-data boundaries
 
-local-only PROJECT_SPECIFICATION_TEMPLATE.md
-  constrains -> boundary between project context and project requirements
-
-local-only SAFETY_PRIVACY_GUARDRAILS.md
-  constrains -> data, privacy, protected-data and publication context
-
-local-only TOOL_AND_AGENT_POLICY.md
-  constrains -> tool, command, environment and external-action context
-
-local-only EVIDENCE_REVIEW_AND_ACCEPTANCE.md
-  constrains -> review, validation and acceptance evidence
-
-local-only RESEARCH_REPOSITORY_PATTERNS.md
-  informs -> migration-context boundaries without authorizing execution
+docs/project_specification.md and docs/k50_migration_provenance.md
+  govern -> migration scope, provenance and execution boundaries
 ```
 
 This context is not an active Project Specification, Migration Contract, source-repository access authorization, migration authorization or Git Hard Gate record.
@@ -411,17 +391,10 @@ current_state:
     production_zenodo: not_authorized
     bundle_boundary: explicit_allowlist_implemented_and_validated
   permanent_execution_allowed_paths: none
-  gpt_material:
+  local_development_and_governance_materials:
     release_boundary: local_only
-    current_transition_state: migration complete; no GPT path is present in the current tracked tree
-    local_disposition: preserve all local copies; do not delete
-    untracked_local: orchestration prompts, audit and working material remain out of release scope
-    history: prior public Git history is retained without rewrite
-    zenodo_bundle: excluded
-  agents_md:
-    release_boundary: local_only
-    current_transition_state: migration complete; AGENTS.md is not present in the current tracked tree
-    local_disposition: preserve local copy; do not delete
+    current_transition_state: excluded from the current tracked and release trees
+    local_disposition: preserved outside the release boundary
     history: prior public Git history is retained without rewrite
     zenodo_bundle: excluded
 ```

@@ -119,20 +119,12 @@ source_of_truth_inputs:
     - docs/project_context.md: accepted A1 Project Context instance
   verified_repository_authority:
     - README.md
-    - local-only AGENTS.md retained as workspace guidance; removal from the current tracked tree is complete
     - docs/restricted_data_policy.md
     - docs/reproducibility_scope.md
     - data/README.md
     - .gitignore
     - DESCRIPTION
     - _quarto.yml
-  local_only_faro1_knowledge_provenance:
-    - KB_INDEX.md
-    - PROJECT_SPECIFICATION_TEMPLATE.md
-    - SAFETY_PRIVACY_GUARDRAILS.md
-    - TOOL_AND_AGENT_POLICY.md
-    - EVIDENCE_REVIEW_AND_ACCEPTANCE.md
-    - RESEARCH_REPOSITORY_PATTERNS.md
   verified_source_inspection_facts:
     - source_repository: Tupatuko2023/Python-R-Scripts
     - source_revision: 8a4a4e37751a4416a6a875787a8173f621da91a9
@@ -150,13 +142,10 @@ artifact eligibility, dependency closure, privacy/provenance, migration strategy
 scientific equivalence or source-data safety. Unverified candidate inputs are not
 binding project authority.
 
-FARO1/GPT and agent guidance is approved for local-only use and is not a
-runtime, test, curated-bundle or future release-tree dependency. Removal of the
-ten approved files from the current tracked tree is complete; local copies are
-preserved outside the release boundary. References to them below retain
-historical governance and decision provenance; the accepted public Project
-Context and Specification are the repository-level authorities.
-Earlier Git history remains public and is not rewritten.
+Local development and governance materials are outside the runtime, test,
+curated-bundle and release-tree boundary. The accepted public Project Context
+and Project Specification are the repository-level authorities. Earlier Git
+history remains public and is not rewritten.
 
 ## 4. Scope and Non-Goals
 
@@ -292,7 +281,7 @@ scope: >
 purpose: >
   Establish the migration requirement so remaining artifact-selection,
   provenance, strategy-comparison and migration-planning work can proceed under
-  FARO1 controls.
+  the approved bounded migration controls.
 scientific_changes_allowed: false
 git_hard_gate_action_authorized: false
 ```
@@ -486,12 +475,13 @@ migration_contract:
     value: provenance_preserving_copy
     approval_scope: minimal K50-centered core only
     approval_state: approved for planning; execution not authorized
-    pattern_reference: RESEARCH_REPOSITORY_PATTERNS.md
+    authority_reference: docs/project_specification.md
+    provenance_reference: docs/k50_migration_provenance.md
     evidence:
       - WP-A1-MIGRATION-STRATEGY-COMPARISON: PASS
   artifact_selection:
     scope: candidate groups identified; migration approval remains NEEDS_VERIFICATION
-    classification_reference: RESEARCH_REPOSITORY_PATTERNS.md
+    classification_reference: docs/project_specification.md
     evidence:
       - WP-A1-SOURCE-ARTIFACT-INVENTORY-AND-CLASSIFICATION: PASS
       - WP-A1-SOURCE-DEPENDENCY-CLOSURE: PASS WITH DEFECTS
@@ -553,7 +543,7 @@ migration_contract:
       - protected-environment WIDE validation
   privacy_review_status:
     value: PASS WITH DEFECTS
-    authority_reference: SAFETY_PRIVACY_GUARDRAILS.md
+    authority_reference: docs/restricted_data_policy.md
     evidence: WP-A1-SOURCE-PRIVACY-PROVENANCE-REVIEW
     participant_data_safety_state: source data are not safe for migration
     preserved_blockers:
@@ -585,7 +575,7 @@ migration_contract:
       - commit signing is not recorded as a universal provenance requirement
   portability_changes_allowed:
     value: limited
-    boundary_reference: RESEARCH_REPOSITORY_PATTERNS.md
+    boundary_reference: docs/project_specification.md
     approved_limited_scope:
       - target-specific synthetic WIDE test-control path selection may be implemented later only if classified NON_SEMANTIC_PORTABILITY
       - production lock semantics, integrity checks and authority must remain unchanged
@@ -809,7 +799,6 @@ decision_date: 2026-08-10
 project_authorities:
   - accepted and validated docs/project_context.md
   - accepted and validated docs/project_specification.md
-  - applicable local-only FARO1 Knowledge routed through KB_INDEX.md as historical governance provenance
 activation_scope:
   - read-only target-repository inspection
   - documentation and planning within separately approved bounded Work Packages
@@ -963,29 +952,17 @@ stage, commit, push, or release artifacts.
 
 ## 15. Dependencies and References
 
-Typed dependency relationships:
+Repository-level dependency relationships:
 
 ```text
-local-only KB_INDEX.md
-  routes-to -> PROJECT_SPECIFICATION_TEMPLATE.md for project specification structure
-
 docs/project_context.md
   informs -> docs/project_specification.md
 
-local-only PROJECT_SPECIFICATION_TEMPLATE.md
-  structures -> docs/project_specification.md
+docs/restricted_data_policy.md and data/README.md
+  constrain -> data, privacy and protected-data requirements
 
-local-only SAFETY_PRIVACY_GUARDRAILS.md
-  constrains -> data, privacy, protected-data and publication requirements
-
-local-only TOOL_AND_AGENT_POLICY.md
-  constrains -> tool, command, network, Git and agent boundaries
-
-local-only EVIDENCE_REVIEW_AND_ACCEPTANCE.md
-  constrains -> evidence, review, validation and acceptance gates
-
-local-only RESEARCH_REPOSITORY_PATTERNS.md
-  informs -> migration patterns without authorizing execution
+docs/project_specification.md and docs/k50_migration_provenance.md
+  govern -> migration scope, provenance and execution boundaries
 ```
 
 This Specification records bounded Project Mode activation and the bounded
@@ -1059,15 +1036,12 @@ canonical_current_state:
     registration_control: registered_active_not_dispatched
     zenodo_workflow: registered_active_and_validated
   repository_hygiene:
-    gpt_release_boundary: local_only
-    gpt_transition_state: migration complete; no GPT path is present in the current tracked tree
-    gpt_local_disposition: preserve all local copies; do not delete
-    untracked_gpt_material: local orchestration and audit material remains out of release scope
-    agents_md_release_boundary: local_only
-    agents_md_transition_state: migration complete; AGENTS.md is not present in the current tracked tree
-    agents_md_local_disposition: preserve local copy; do not delete
+    local_development_and_governance_materials:
+      release_boundary: local_only
+      transition_state: excluded from the current tracked and release trees
+      local_disposition: preserved outside the release boundary
     history: prior public Git history is retained without rewrite
-    zenodo_bundle_excludes_gpt_and_agents: true
+    zenodo_bundle_excludes_local_development_materials: true
   execution_authority:
     permanent_allowed_paths: none
     rule: each write or external action requires a separately approved bounded Work Package

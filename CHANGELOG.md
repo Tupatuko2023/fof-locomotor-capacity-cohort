@@ -11,8 +11,8 @@ All notable public software changes are documented in this file.
   the separation between software release and scientific-results publication.
 - Completed and validated the draft-only Zenodo Sandbox pipeline; unpublished,
   unsubmitted Sandbox draft `587120` is retained as validation evidence only.
-- Completed the local-only migration of GPT and agent guidance out of the
-  current tracked tree without rewriting earlier Git history.
+- Moved local development and governance materials outside the current tracked
+  and release trees without rewriting earlier Git history.
 - Added an Owner-gated release runbook. No tag, GitHub Release, Production
   Zenodo record, or DOI has been published.
 
