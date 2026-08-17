@@ -1033,7 +1033,7 @@ canonical_current_state:
     production_zenodo: not_authorized
     bundle_boundary: explicit_allowlist_implemented_and_validated
   github_actions:
-    registration_control: registered_active_not_dispatched
+    registration_control_history: temporary registration diagnostic retired after workflow registration was validated
     zenodo_workflow: registered_active_and_validated
   repository_hygiene:
     local_development_and_governance_materials:

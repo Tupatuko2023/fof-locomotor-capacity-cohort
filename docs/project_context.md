@@ -377,7 +377,7 @@ current_state:
   production_zenodo_record: not_created
   production_zenodo_authorized: false
   github_actions:
-    registration_control: registered_active_not_dispatched
+    registration_control_history: temporary registration diagnostic retired after workflow registration was validated
     zenodo_sandbox_workflow: registered_active_and_validated
   sandbox:
     phase: COMPLETE / VALIDATED
