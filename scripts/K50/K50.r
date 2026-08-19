@@ -65,32 +65,6 @@ script_base <- if (length(file_arg) > 0) {
 script_label <- sub("\\.V.*$", "", script_base)
 if (is.na(script_label) || script_label == "") script_label <- "K50"
 
-source(here::here("R", "functions", "reporting.R"))
-paths <- init_paths(script_label)
-outputs_dir <- paths$outputs_dir
-manifest_path <- paths$manifest_path
-
-req_cols <- c(
-  "id", "time", "FOF_status", "age", "sex", "BMI",
-  "locomotor_capacity", "locomotor_capacity_0", "locomotor_capacity_12m",
-  "z3", "z3_0", "z3_12m", "Composite_Z", "Composite_Z_0",
-  "Composite_Z_12m", "FI22_nonperformance_KAAOS", "tasapainovaikeus"
-)
-
-append_manifest_safe <- function(label, kind, path, n = NA_integer_, notes = NA_character_) {
-  append_manifest(
-    manifest_row(
-      script = script_label,
-      label = label,
-      path = get_relpath(path),
-      kind = kind,
-      n = n,
-      notes = notes
-    ),
-    manifest_path
-  )
-}
-
 get_arg <- function(flag, default = NULL) {
   args <- commandArgs(trailingOnly = TRUE)
   idx <- match(flag, args)
@@ -106,6 +80,67 @@ has_flag <- function(flag) {
     stop(flag, " does not accept a value or path.", call. = FALSE)
   }
   TRUE
+}
+
+source(here::here("R", "functions", "reporting.R"))
+synthetic_mode_requested <- has_flag("--synthetic-wide-test-control")
+synthetic_output_arg <- get_arg("--synthetic-output-dir")
+
+if (synthetic_mode_requested) {
+  if (is.null(synthetic_output_arg) || !nzchar(trimws(synthetic_output_arg))) {
+    stop("K50 synthetic execution requires an explicit --synthetic-output-dir.", call. = FALSE)
+  }
+  canonical_output <- normalizePath(
+    here::here("outputs", "tables", script_label), winslash = "/", mustWork = FALSE
+  )
+  requested_output <- normalizePath(
+    synthetic_output_arg, winslash = "/", mustWork = FALSE
+  )
+  if (identical(requested_output, canonical_output) ||
+      startsWith(requested_output, paste0(canonical_output, "/"))) {
+    stop("K50 synthetic output must not use the canonical local K50 output directory.", call. = FALSE)
+  }
+  dir.create(requested_output, recursive = TRUE, showWarnings = FALSE)
+  if (length(list.files(requested_output, all.files = TRUE, no.. = TRUE)) > 0L) {
+    stop("K50 synthetic output directory must be empty.", call. = FALSE)
+  }
+  paths <- list(
+    outputs_dir = requested_output,
+    manifest_path = file.path(requested_output, "K50_manifest.csv")
+  )
+  options(
+    fof.outputs_dir = paths$outputs_dir,
+    fof.manifest_path = paths$manifest_path,
+    fof.script = script_label
+  )
+} else {
+  if (!is.null(synthetic_output_arg)) {
+    stop("--synthetic-output-dir is allowed only with --synthetic-wide-test-control.", call. = FALSE)
+  }
+  paths <- init_paths(script_label)
+}
+outputs_dir <- paths$outputs_dir
+manifest_path <- paths$manifest_path
+
+req_cols <- c(
+  "id", "time", "FOF_status", "age", "sex", "BMI",
+  "locomotor_capacity", "locomotor_capacity_0", "locomotor_capacity_12m",
+  "z3", "z3_0", "z3_12m", "Composite_Z", "Composite_Z_0",
+  "Composite_Z_12m", "FI22_nonperformance_KAAOS", "tasapainovaikeus"
+)
+
+append_manifest_safe <- function(label, kind, path, n = NA_integer_, notes = NA_character_) {
+  append_manifest(
+    manifest_row(
+      script = script_label,
+      label = label,
+      path = if (synthetic_mode_requested) basename(path) else get_relpath(path),
+      kind = kind,
+      n = n,
+      notes = notes
+    ),
+    manifest_path
+  )
 }
 
 parse_toggle <- function(x, flag) {
@@ -169,6 +204,123 @@ compute_sha256 <- function(path) {
     return(digest::digest(file = path, algo = "sha256", serialize = FALSE))
   }
   stop("K50 could not compute SHA-256 for input path: ", path, call. = FALSE)
+}
+
+public_synthetic_disclaimer <- paste(
+  "Synthetic structural-validation output only.",
+  "Values are artificial and are not study findings."
+)
+
+validate_public_synthetic_receipt <- function(fields) {
+  if (!is.list(fields) || is.null(names(fields)) || anyDuplicated(names(fields))) {
+    stop("PUBLIC_RECEIPT_INVALID_FIELDS", call. = FALSE)
+  }
+  required <- c(
+    "receipt_schema_version", "receipt_classification", "synthetic_disclaimer",
+    "timestamp_utc", "script", "generator_path", "generator_repository_revision",
+    "generator_sha256", "input_classification", "input_reference",
+    "control_reference", "snapshot_role", "snapshot_id", "input_md5",
+    "input_sha256", "shape", "outcome", "rows_loaded", "rows_modeled",
+    "fi22_enabled", "runtime_r_version", "runtime_platform"
+  )
+  allowed <- c(
+    required, "rows_after_person_dedup", "n_raw_person_lookup",
+    "ex_duplicate_person_lookup", "ex_duplicate_person_rows",
+    "ex_person_conflict_ambiguous", "allow_composite_z_verified"
+  )
+  dynamic_allowed <- grepl("^output_[a-z0-9_]+_(reference|sha256)$", names(fields))
+  if (any(!names(fields) %in% allowed & !dynamic_allowed)) {
+    stop("PUBLIC_RECEIPT_UNEXPECTED_FIELD", call. = FALSE)
+  }
+  if (!all(required %in% names(fields))) {
+    stop("PUBLIC_RECEIPT_MISSING_FIELD", call. = FALSE)
+  }
+  values <- vapply(fields, function(value) {
+    if (length(value) != 1L || is.na(value)) stop("PUBLIC_RECEIPT_INVALID_VALUE", call. = FALSE)
+    as.character(value)
+  }, character(1))
+  if (any(!nzchar(values)) ||
+      any(grepl("\r", values, fixed = TRUE)) ||
+      any(grepl("\n", values, fixed = TRUE)) ||
+      any(grepl("=", values, fixed = TRUE))) {
+    stop("PUBLIC_RECEIPT_UNSAFE_VALUE", call. = FALSE)
+  }
+  forbidden <- paste0(
+    "(?i)(^[/~]|^[a-z]:[\\\\/]|/data/|/home/|com\\.termux|",
+    "production|protected|participant[_ -]?id|subject[_ -]?id|patient[_ -]?id|",
+    "password|api[_ -]?key|authorization[[:space:]]*:[[:space:]]*bearer|ghp_[a-z0-9]+)"
+  )
+  if (any(grepl(forbidden, values, perl = TRUE))) {
+    stop("PUBLIC_RECEIPT_FORBIDDEN_METADATA", call. = FALSE)
+  }
+  expected <- c(
+    receipt_schema_version = "1.0.0",
+    receipt_classification = "PUBLIC_SYNTHETIC",
+    synthetic_disclaimer = public_synthetic_disclaimer,
+    script = "K50",
+    generator_path = "scripts/K50/K50.r",
+    input_classification = "PUBLIC_SYNTHETIC_INPUT",
+    input_reference = "data/synthetic/k50_wide_structural_fixture.csv",
+    control_reference = "data/synthetic/k50_wide_authoritative_test_control.lock",
+    snapshot_role = "synthetic_wide_test_control",
+    shape = "WIDE"
+  )
+  for (key in names(expected)) {
+    if (!identical(values[[key]], expected[[key]])) {
+      stop("PUBLIC_RECEIPT_CONTRACT_MISMATCH", call. = FALSE)
+    }
+  }
+  if (!startsWith(values[["snapshot_id"]], "SYN-K50-WIDE-")) {
+    stop("PUBLIC_RECEIPT_SNAPSHOT_ID", call. = FALSE)
+  }
+  control <- read_key_value_file(
+    here::here("data", "synthetic", "k50_wide_authoritative_test_control.lock")
+  )
+  control_binding <- c(
+    snapshot_role = control$snapshot_role,
+    snapshot_id = control$snapshot_id,
+    input_md5 = control$md5,
+    input_sha256 = control$sha256
+  )
+  if (any(vapply(names(control_binding), function(key) {
+    !identical(values[[key]], unname(control_binding[[key]]))
+  }, logical(1)))) {
+    stop("PUBLIC_RECEIPT_CONTROL_BINDING", call. = FALSE)
+  }
+  digest_keys <- grep("(_sha256$|^generator_sha256$)", names(values), value = TRUE)
+  if (any(!grepl("^[0-9a-f]{64}$", values[digest_keys]))) {
+    stop("PUBLIC_RECEIPT_SHA256", call. = FALSE)
+  }
+  if (!grepl("^[0-9a-f]{32}$", values[["input_md5"]])) {
+    stop("PUBLIC_RECEIPT_MD5", call. = FALSE)
+  }
+  if (!grepl("^[0-9a-f]{40}$", values[["generator_repository_revision"]])) {
+    stop("PUBLIC_RECEIPT_GIT_REVISION", call. = FALSE)
+  }
+  reference_keys <- grep("^output_.*_reference$", names(values), value = TRUE)
+  if (length(reference_keys) && any(!grepl("^[A-Za-z0-9][A-Za-z0-9_.-]*$", values[reference_keys]))) {
+    stop("PUBLIC_RECEIPT_OUTPUT_REFERENCE", call. = FALSE)
+  }
+  invisible(TRUE)
+}
+
+current_repository_revision <- function() {
+  git <- Sys.which("git")
+  if (!nzchar(git)) stop("PUBLIC_RECEIPT_GIT_UNAVAILABLE", call. = FALSE)
+  revision <- suppressWarnings(system2(
+    git, c("-C", shQuote(here::here()), "rev-parse", "HEAD"),
+    stdout = TRUE, stderr = FALSE
+  ))
+  if (length(revision) != 1L || !grepl("^[0-9a-f]{40}$", revision)) {
+    stop("PUBLIC_RECEIPT_GIT_REVISION", call. = FALSE)
+  }
+  revision
+}
+
+write_public_synthetic_receipt <- function(path, fields) {
+  validate_public_synthetic_receipt(fields)
+  writeLines(paste0(names(fields), "=", unlist(fields, use.names = FALSE)), con = path)
+  invisible(path)
 }
 
 resolve_authoritative_wide_input <- function(
@@ -484,6 +636,9 @@ raw_input_df <- read_dataset(data_path)
 raw_rows_loaded <- nrow(raw_input_df)
 input_md5 <- unname(tools::md5sum(data_path))
 input_sha256 <- compute_sha256(data_path)
+if (synthetic_wide_test_control) {
+  Sys.setenv(DATA_ROOT = here::here("data", "synthetic", "k50_synthetic_dedup_lookup_root"))
+}
 ddup <- prepare_k50_person_dedup(raw_input_df, shape, outcome)
 input_df <- ddup$data
 rows_after_person_dedup <- nrow(input_df)
@@ -780,6 +935,7 @@ if (!is.null(fi22_tbl)) {
   fi22_path <- NA_character_
 }
 
+if (!synthetic_wide_test_control) {
 receipt_path <- file.path(outputs_dir, paste0(prefix, "_input_receipt.txt"))
 receipt_lines <- c(
   paste0("script=", script_label),
@@ -906,5 +1062,62 @@ append_manifest_safe(
   path = session_path,
   notes = "K50 session info"
 )
+} else {
+  output_files <- list(
+    qc_gates = gates_path,
+    missingness = missing_path,
+    primary_terms = primary_path,
+    fallback_terms = fallback_path,
+    fi22_terms = fi22_path
+  )
+  output_files <- output_files[!vapply(output_files, function(path) {
+    length(path) != 1L || is.na(path)
+  }, logical(1))]
+  public_fields <- list(
+    receipt_schema_version = "1.0.0",
+    receipt_classification = "PUBLIC_SYNTHETIC",
+    synthetic_disclaimer = public_synthetic_disclaimer,
+    timestamp_utc = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC"),
+    script = script_label,
+    generator_path = "scripts/K50/K50.r",
+    generator_repository_revision = current_repository_revision(),
+    generator_sha256 = compute_sha256(here::here("scripts", "K50", "K50.r")),
+    input_classification = "PUBLIC_SYNTHETIC_INPUT",
+    input_reference = "data/synthetic/k50_wide_structural_fixture.csv",
+    control_reference = "data/synthetic/k50_wide_authoritative_test_control.lock",
+    snapshot_role = data_ref$snapshot_role,
+    snapshot_id = data_ref$snapshot_id,
+    input_md5 = input_md5,
+    input_sha256 = input_sha256,
+    shape = shape,
+    outcome = outcome,
+    rows_loaded = as.character(raw_rows_loaded),
+    rows_after_person_dedup = as.character(rows_after_person_dedup),
+    rows_modeled = as.character(nrow(model_df)),
+    n_raw_person_lookup = as.character(ddup$diagnostics$n_raw_person_lookup),
+    ex_duplicate_person_lookup = as.character(ddup$diagnostics$ex_duplicate_person_lookup),
+    ex_duplicate_person_rows = as.character(ddup$diagnostics$ex_duplicate_person_rows),
+    ex_person_conflict_ambiguous = as.character(ddup$diagnostics$ex_person_conflict_ambiguous),
+    fi22_enabled = tolower(as.character(fi22_enabled)),
+    allow_composite_z_verified = tolower(as.character(allow_composite_z)),
+    runtime_r_version = R.version$version.string,
+    runtime_platform = R.version$platform
+  )
+  for (label in names(output_files)) {
+    public_fields[[paste0("output_", label, "_reference")]] <- basename(output_files[[label]])
+    public_fields[[paste0("output_", label, "_sha256")]] <- compute_sha256(output_files[[label]])
+  }
+  public_receipt_path <- file.path(
+    outputs_dir, paste0(prefix, "_public_synthetic_receipt.txt")
+  )
+  write_public_synthetic_receipt(public_receipt_path, public_fields)
+  append_manifest_safe(
+    label = paste0(prefix, "_public_synthetic_receipt"),
+    kind = "text",
+    path = public_receipt_path,
+    n = nrow(model_df),
+    notes = "Public synthetic-only K50 provenance receipt"
+  )
+}
 
 message("K50 outputs written to: ", outputs_dir)
