@@ -82,7 +82,7 @@ class QCProvenanceBundleTests(unittest.TestCase):
                 validator.sha256_file(canonical / "bundle_manifest.json"),
             )
 
-    def test_receipt_disclaimer_registry_and_state_separation(self):
+    def test_receipt_disclaimer_registry_and_revision_state_separation(self):
         with tempfile.TemporaryDirectory() as td:
             bundle = self.build(Path(td))
             payload = json.loads((bundle / "payload_manifest.json").read_text())
@@ -96,7 +96,20 @@ class QCProvenanceBundleTests(unittest.TestCase):
             item = next(x for x in registry["artifacts"] if x["artifact_id"] == validator.ARTIFACT_ID)
             self.assertEqual((item["artifact_status"], item["disclosure_state"], item["publication_status"]),
                              ("SYNTHETIC_VALIDATED", "NOT_APPLICABLE_SYNTHETIC", "NOT_APPROVED"))
-            self.assertEqual(item["artifact_sha256"], validator.sha256_file(bundle / "bundle_manifest.json"))
+            canonical_manifest = ROOT / item["candidate_output_path"]
+            self.assertEqual(item["artifact_sha256"], validator.sha256_file(canonical_manifest))
+            self.assertEqual(
+                item["artifact_sha256"],
+                validator.validate_bundle(canonical_manifest.parent, ROOT),
+            )
+            runtime = json.loads((bundle / "runtime_metadata.json").read_text())
+            self.assertEqual(runtime["generator_repository_revision"], validator.repository_revision(ROOT))
+            canonical_runtime = json.loads((canonical_manifest.parent / "runtime_metadata.json").read_text())
+            if runtime["generator_repository_revision"] != canonical_runtime["generator_repository_revision"]:
+                self.assertNotEqual(
+                    item["artifact_sha256"],
+                    validator.sha256_file(bundle / "bundle_manifest.json"),
+                )
             self.assertTrue(item["validation_receipt_reference"].endswith("/r0001/promotion_validation_receipt.json"))
 
     def test_missing_extra_and_renamed_members_fail(self):
