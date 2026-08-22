@@ -19,6 +19,7 @@ DISCLAIMER = "Synthetic structural-validation evidence only; not study findings.
 CANONICAL_JSON = "UTF-8_NO_BOM_LF_SORTED_KEYS_COMPACT"
 TIMESTAMP_POLICY = "OMITTED_FROM_CANONICAL_IDENTITY"
 BUNDLE_NAME = ARTIFACT_ID
+CANONICAL_BUNDLE_NAME = "bundle"
 PAYLOAD_FILES = (
     "decision_evidence.json",
     "modeled_cohort_synthetic_receipt.json",
@@ -115,6 +116,18 @@ def repository_revision(root: Path) -> str:
     return value
 
 
+def git_object_bytes(root: Path, revision: str, path: str) -> bytes:
+    if not GIT_SHA_RE.fullmatch(revision):
+        fail("GENERATOR_REVISION_INVALID")
+    try:
+        return subprocess.run(
+            ["git", "show", f"{revision}:{path}"], cwd=root, check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError):
+        fail("GENERATOR_REVISION_UNAVAILABLE")
+
+
 def read_control(root: Path) -> dict[str, str]:
     path = root / "data/synthetic/k50_wide_authoritative_test_control.lock"
     fields: dict[str, str] = {}
@@ -202,14 +215,19 @@ def validate_payload(bundle: Path, root: Path) -> str:
         "runtime_profile", "generator_path", "generator_repository_revision", "generator_sha256", "timestamp_policy",
     }, "RUNTIME_FIELDS")
     generator_path = "scripts/demo/build_qc_provenance_bundle.py"
-    if runtime != {
+    expected_runtime = {
         "schema_version": SCHEMA_VERSION, "artifact_id": ARTIFACT_ID,
         "data_classification": CLASSIFICATION, "synthetic_disclaimer": DISCLAIMER,
         "runtime_profile": "PYTHON_STANDARD_LIBRARY", "generator_path": generator_path,
-        "generator_repository_revision": repository_revision(root),
+        "generator_repository_revision": runtime["generator_repository_revision"],
         "generator_sha256": sha256_file(root / generator_path), "timestamp_policy": TIMESTAMP_POLICY,
-    }:
+    }
+    if runtime != expected_runtime:
         fail("GENERATOR_BINDING")
+    if sha256_bytes(git_object_bytes(
+        root, runtime["generator_repository_revision"], generator_path
+    )) != runtime["generator_sha256"]:
+        fail("GENERATOR_REVISION_HASH_MISMATCH")
     validate_qc(bundle / "qc_table.csv")
     for name in PAYLOAD_FILES:
         if name.endswith(".json"):
@@ -237,7 +255,7 @@ def validate_payload(bundle: Path, root: Path) -> str:
 
 
 def validate_bundle(bundle: Path, root: Path) -> str:
-    if bundle.name != BUNDLE_NAME or bundle.is_symlink() or not bundle.is_dir():
+    if bundle.name not in {BUNDLE_NAME, CANONICAL_BUNDLE_NAME} or bundle.is_symlink() or not bundle.is_dir():
         fail("BUNDLE_PATH")
     names = sorted(item.name for item in bundle.iterdir())
     if names != list(ALL_FILES):

@@ -1,0 +1,4 @@
+gate,status,evidence
+generator_binding,PASS,REPOSITORY_SOURCE_HASH
+public_safety_contract,PASS,FAIL_CLOSED_ALLOWLIST
+synthetic_input_binding,PASS,SYNTHETIC_CONTROL_HASH

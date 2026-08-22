@@ -63,7 +63,7 @@ class SyntheticPromotionTests(unittest.TestCase):
 
     def make_case(self, profile="SINGLE_FILE_TABLE_V1"):
         revision = current_revision()
-        validator = self.source("scripts/validation/validate_qc_provenance_bundle.py")
+        validator = self.source("scripts/validation/validate_synthetic_promotion.py")
         if profile == "SINGLE_FILE_TABLE_V1":
             artifact_id = "TEST-TABLE-SYNTHETIC-01"
             artifact_type = "TABLE"

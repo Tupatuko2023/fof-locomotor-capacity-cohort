@@ -67,6 +67,21 @@ class QCProvenanceBundleTests(unittest.TestCase):
             self.assertEqual(digest_one, validator.sha256_file(one / "bundle_manifest.json"))
             self.assertEqual(digest_one, validator.validate_bundle(one, ROOT))
 
+    def test_canonical_bundle_leaf_and_historical_execution_revision(self):
+        with tempfile.TemporaryDirectory() as td:
+            parent = Path(td)
+            bundle = self.build(parent)
+            canonical = bundle.rename(parent / validator.CANONICAL_BUNDLE_NAME)
+            runtime_path = canonical / "runtime_metadata.json"
+            runtime = json.loads(runtime_path.read_text())
+            runtime["generator_repository_revision"] = "bfc88f19d9e53a742cd86f1702e65de6400a3cce"
+            write_json(runtime_path, runtime)
+            refresh_hash_chain(canonical)
+            self.assertEqual(
+                validator.validate_bundle(canonical, ROOT),
+                validator.sha256_file(canonical / "bundle_manifest.json"),
+            )
+
     def test_receipt_disclaimer_registry_and_state_separation(self):
         with tempfile.TemporaryDirectory() as td:
             bundle = self.build(Path(td))
@@ -80,9 +95,9 @@ class QCProvenanceBundleTests(unittest.TestCase):
             registry = json.loads((ROOT / "config/artifacts/artifact_registry.json").read_text())
             item = next(x for x in registry["artifacts"] if x["artifact_id"] == validator.ARTIFACT_ID)
             self.assertEqual((item["artifact_status"], item["disclosure_state"], item["publication_status"]),
-                             ("SYNTHETIC_CANDIDATE", "NOT_APPLICABLE_SYNTHETIC", "NOT_APPROVED"))
-            self.assertNotIn("artifact_sha256", item)
-            self.assertNotIn("validation_receipt_reference", item)
+                             ("SYNTHETIC_VALIDATED", "NOT_APPLICABLE_SYNTHETIC", "NOT_APPROVED"))
+            self.assertEqual(item["artifact_sha256"], validator.sha256_file(bundle / "bundle_manifest.json"))
+            self.assertTrue(item["validation_receipt_reference"].endswith("/r0001/promotion_validation_receipt.json"))
 
     def test_missing_extra_and_renamed_members_fail(self):
         for mode in ("missing", "extra", "renamed"):
