@@ -53,23 +53,26 @@ class ArtifactRegistryTests(unittest.TestCase):
             "A1-SUPPLEMENT-QC-PROVENANCE-01",
         })
         self.assertEqual(len({item["manuscript_reference_key"] for item in artifacts}), 5)
-        pilot = next(item for item in artifacts if item["artifact_id"] == "A1-TABLE-PRIMARY-MODEL-01")
-        self.assertEqual(pilot["artifact_status"], "SYNTHETIC_VALIDATED")
-        self.assertEqual(pilot["artifact_sha256"], "2474a29132fed221540b3ed743a0802ce8386224d62d2cd9a90ccd9a83ee97cf")
-        self.assertEqual(
-            pilot["validation_receipt_reference"],
-            "outputs/tables/A1/A1-TABLE-PRIMARY-MODEL-01/r0001/promotion_validation_receipt.json",
-        )
-        self.assertEqual(pilot["validation_receipt_sha256"], "8211d8dc3f133ec11ac3f88becbf907506efe0a66638bfb96abd84e7d463133d")
+        validated_hashes = {
+            "A1-TABLE-PRIMARY-MODEL-01": "2474a29132fed221540b3ed743a0802ce8386224d62d2cd9a90ccd9a83ee97cf",
+            "A1-SUPPLEMENT-MISSINGNESS-01": "44eab756e58e5c69f8e30c511a3c2b8f282db4b175fd50f909faddc2b04111bb",
+            "A1-SUPPLEMENT-Z3-SENSITIVITY-01": "8c681b67cba34ea08c1608f1d7f8d5a1b67f1c87961ae936e655fcc4adf53a3e",
+            "A1-SUPPLEMENT-FI22-SENSITIVITY-01": "218f26e8eea14eee33891f2a995f42d523ddab00e60c24758c0e83350c560081",
+        }
         for artifact in artifacts:
             self.assertEqual(artifact["disclosure_state"], "NOT_APPLICABLE_SYNTHETIC")
             self.assertEqual(artifact["publication_status"], "NOT_APPROVED")
             self.assertTrue(artifact["provisional"])
-            if artifact is pilot:
-                continue
-            self.assertEqual(artifact["artifact_status"], "SYNTHETIC_CANDIDATE")
-            self.assertNotIn("artifact_sha256", artifact)
-            self.assertNotIn("validation_receipt_reference", artifact)
+            if artifact["artifact_id"] in validated_hashes:
+                self.assertEqual(artifact["artifact_status"], "SYNTHETIC_VALIDATED")
+                self.assertEqual(artifact["artifact_type"], "TABLE")
+                self.assertEqual(artifact["artifact_sha256"], validated_hashes[artifact["artifact_id"]])
+                self.assertTrue(artifact["validation_receipt_reference"].endswith("/r0001/promotion_validation_receipt.json"))
+                self.assertIn("validation_receipt_sha256", artifact)
+            else:
+                self.assertEqual(artifact["artifact_status"], "SYNTHETIC_CANDIDATE")
+                self.assertNotIn("artifact_sha256", artifact)
+                self.assertNotIn("validation_receipt_reference", artifact)
         qc = next(item for item in artifacts if item["artifact_id"] == "A1-SUPPLEMENT-QC-PROVENANCE-01")
         self.assertFalse(qc["scientific_approval_required"])
         self.assertEqual(qc["manuscript_destination"], "NEEDS_VERIFICATION")

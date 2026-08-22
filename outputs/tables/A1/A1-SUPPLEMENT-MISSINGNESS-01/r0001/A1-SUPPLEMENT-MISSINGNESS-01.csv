@@ -1,0 +1,5 @@
+FOF_status,time,n,outcome_missing_n,age_missing_n,sex_missing_n,bmi_missing_n
+0,0,2,0,0,0,0
+0,12,2,0,0,0,0
+1,0,2,0,0,0,0
+1,12,2,0,0,0,0

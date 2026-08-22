@@ -1,0 +1,4 @@
+term,estimate,std.error,statistic,p.value,conf.low,conf.high,branch,outcome,model_role,formula,n
+(Intercept),1,4.143814408943953e-16,2413235491052914,2.6380341857554025e-16,0.9999999999999948,1.0000000000000053,wide,locomotor_capacity,fi22_sensitivity,locomotor_capacity_12m ~ locomotor_capacity_0 + FOF_status + age + sex + BMI + FI22_nonperformance_KAAOS,4
+locomotor_capacity_0,1,1.6917051484508915e-17,59111955822544390,1.0769729465198718e-17,0.9999999999999998,1.0000000000000002,wide,locomotor_capacity,fi22_sensitivity,locomotor_capacity_12m ~ locomotor_capacity_0 + FOF_status + age + sex + BMI + FI22_nonperformance_KAAOS,4
+FOF_status1,4.229262871127229e-16,3.782767709822566e-16,1.1180339887498951,0.4645590543975396,-4.3835358119268955e-15,5.229388386152342e-15,wide,locomotor_capacity,fi22_sensitivity,locomotor_capacity_12m ~ locomotor_capacity_0 + FOF_status + age + sex + BMI + FI22_nonperformance_KAAOS,4
