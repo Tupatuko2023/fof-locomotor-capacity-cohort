@@ -38,12 +38,27 @@ class ArtifactRegistryTests(unittest.TestCase):
             with self.subTest(name=name):
                 validator.validate_registry(load(name))
 
-    def test_canonical_registry_is_empty(self):
+    def test_canonical_registry_has_bounded_synthetic_candidates(self):
         registry = json.loads(
             (ROOT / "config" / "artifacts" / "artifact_registry.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(registry["artifacts"], [])
         validator.validate_registry(registry)
+        artifacts = registry["artifacts"]
+        self.assertEqual(len(artifacts), 4)
+        self.assertEqual({item["artifact_id"] for item in artifacts}, {
+            "A1-TABLE-PRIMARY-MODEL-01",
+            "A1-SUPPLEMENT-MISSINGNESS-01",
+            "A1-SUPPLEMENT-Z3-SENSITIVITY-01",
+            "A1-SUPPLEMENT-FI22-SENSITIVITY-01",
+        })
+        self.assertEqual(len({item["manuscript_reference_key"] for item in artifacts}), 4)
+        for artifact in artifacts:
+            self.assertEqual(artifact["artifact_status"], "SYNTHETIC_CANDIDATE")
+            self.assertEqual(artifact["disclosure_state"], "NOT_APPLICABLE_SYNTHETIC")
+            self.assertEqual(artifact["publication_status"], "NOT_APPROVED")
+            self.assertTrue(artifact["provisional"])
+            self.assertNotIn("artifact_sha256", artifact)
+            self.assertNotIn("validation_receipt_reference", artifact)
 
     def test_invalid_fixture_matrix_is_complete(self):
         cases = load("invalid_cases.json")["synthetic_test_cases"]
