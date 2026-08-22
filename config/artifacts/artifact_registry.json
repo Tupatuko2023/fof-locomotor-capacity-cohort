@@ -8,7 +8,7 @@
       "artifact_revision": 1,
       "provisional": true,
       "artifact_type": "TABLE",
-      "artifact_status": "SYNTHETIC_CANDIDATE",
+      "artifact_status": "SYNTHETIC_VALIDATED",
       "title": "Synthetic WIDE locomotor-capacity primary model table",
       "caption_status": "SYNTHETIC_DISCLAIMER",
       "analysis_source": "K50 WIDE locomotor-capacity primary model table contract",
@@ -30,6 +30,10 @@
       "manuscript_reference_key": "NEEDS_VERIFICATION_A1_PRIMARY_MODEL_01",
       "provenance_required": true,
       "validation_required": true,
+      "candidate_output_path": "outputs/tables/A1/A1-TABLE-PRIMARY-MODEL-01/r0001/A1-TABLE-PRIMARY-MODEL-01.csv",
+      "artifact_sha256": "2474a29132fed221540b3ed743a0802ce8386224d62d2cd9a90ccd9a83ee97cf",
+      "validation_receipt_reference": "outputs/tables/A1/A1-TABLE-PRIMARY-MODEL-01/r0001/promotion_validation_receipt.json",
+      "validation_receipt_sha256": "8211d8dc3f133ec11ac3f88becbf907506efe0a66638bfb96abd84e7d463133d",
       "supersedes": null
     },
     {

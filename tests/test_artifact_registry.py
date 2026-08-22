@@ -38,7 +38,7 @@ class ArtifactRegistryTests(unittest.TestCase):
             with self.subTest(name=name):
                 validator.validate_registry(load(name))
 
-    def test_canonical_registry_has_bounded_synthetic_candidates(self):
+    def test_canonical_registry_has_bounded_synthetic_lifecycle(self):
         registry = json.loads(
             (ROOT / "config" / "artifacts" / "artifact_registry.json").read_text(encoding="utf-8")
         )
@@ -53,11 +53,21 @@ class ArtifactRegistryTests(unittest.TestCase):
             "A1-SUPPLEMENT-QC-PROVENANCE-01",
         })
         self.assertEqual(len({item["manuscript_reference_key"] for item in artifacts}), 5)
+        pilot = next(item for item in artifacts if item["artifact_id"] == "A1-TABLE-PRIMARY-MODEL-01")
+        self.assertEqual(pilot["artifact_status"], "SYNTHETIC_VALIDATED")
+        self.assertEqual(pilot["artifact_sha256"], "2474a29132fed221540b3ed743a0802ce8386224d62d2cd9a90ccd9a83ee97cf")
+        self.assertEqual(
+            pilot["validation_receipt_reference"],
+            "outputs/tables/A1/A1-TABLE-PRIMARY-MODEL-01/r0001/promotion_validation_receipt.json",
+        )
+        self.assertEqual(pilot["validation_receipt_sha256"], "8211d8dc3f133ec11ac3f88becbf907506efe0a66638bfb96abd84e7d463133d")
         for artifact in artifacts:
-            self.assertEqual(artifact["artifact_status"], "SYNTHETIC_CANDIDATE")
             self.assertEqual(artifact["disclosure_state"], "NOT_APPLICABLE_SYNTHETIC")
             self.assertEqual(artifact["publication_status"], "NOT_APPROVED")
             self.assertTrue(artifact["provisional"])
+            if artifact is pilot:
+                continue
+            self.assertEqual(artifact["artifact_status"], "SYNTHETIC_CANDIDATE")
             self.assertNotIn("artifact_sha256", artifact)
             self.assertNotIn("validation_receipt_reference", artifact)
         qc = next(item for item in artifacts if item["artifact_id"] == "A1-SUPPLEMENT-QC-PROVENANCE-01")
