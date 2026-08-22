@@ -22,8 +22,8 @@ ARTIFACT_FIELDS = {
     "disclosure_decision_reference", "publication_status",
     "publication_approval_reference", "candidate_output_path",
     "manuscript_destination", "manuscript_reference_key", "provenance_required",
-    "validation_required", "validation_receipt_reference", "artifact_sha256",
-    "published_sha256", "supersedes",
+    "validation_required", "validation_receipt_reference", "validation_receipt_sha256",
+    "artifact_sha256", "published_sha256", "supersedes",
 }
 REQUIRED_ARTIFACT_FIELDS = {
     "artifact_id", "artifact_revision", "provisional", "artifact_type",
@@ -171,7 +171,9 @@ def validate_artifact(artifact: object, index: int) -> None:
     validate_generator(artifact["generator"], f"{path}.generator")
     if "candidate_output_path" in artifact:
         check_repo_path(artifact["candidate_output_path"], f"{path}.candidate_output_path")
-    for field in ("artifact_sha256", "published_sha256"):
+    if "validation_receipt_reference" in artifact:
+        check_repo_path(artifact["validation_receipt_reference"], f"{path}.validation_receipt_reference")
+    for field in ("artifact_sha256", "validation_receipt_sha256", "published_sha256"):
         if field in artifact:
             check_digest(artifact[field], SHA256_RE, f"{path}.{field}")
     status = artifact["artifact_status"]
@@ -179,6 +181,29 @@ def validate_artifact(artifact: object, index: int) -> None:
     materialized = status in {"SYNTHETIC_VALIDATED", "PROTECTED_GENERATED", "PROTECTED_VALIDATED"}
     if materialized and "artifact_sha256" not in artifact:
         fail("MISSING_ARTIFACT_CHECKSUM", path)
+    if status == "SYNTHETIC_VALIDATED":
+        required_evidence = {
+            "candidate_output_path", "artifact_sha256",
+            "validation_receipt_reference", "validation_receipt_sha256",
+        }
+        if required_evidence - set(artifact):
+            fail("MISSING_SYNTHETIC_VALIDATION_EVIDENCE", path)
+        if not artifact["validation_receipt_reference"].endswith(".json"):
+            fail("VALIDATION_RECEIPT_PATH", f"{path}.validation_receipt_reference")
+        synthetic_state = (
+            artifact["provisional"] is True
+            and artifact["caption_status"] == "SYNTHETIC_DISCLAIMER"
+            and artifact["generator"]["status"] == "EXISTS"
+            and artifact["required_inputs"] == ["PUBLIC_SYNTHETIC_INPUT"]
+            and artifact["data_classification"] == "PUBLIC_SYNTHETIC"
+            and artifact["protected_execution_required"] is False
+            and artifact["disclosure_review_required"] is False
+            and artifact["disclosure_state"] == "NOT_APPLICABLE_SYNTHETIC"
+            and artifact["publication_status"] == "NOT_APPROVED"
+            and artifact["validation_required"] is True
+        )
+        if not synthetic_state:
+            fail("SYNTHETIC_VALIDATION_STATE", path)
     if protected:
         if not artifact["protected_execution_required"] or "protected_execution_reference" not in artifact:
             fail("MISSING_PROTECTED_REFERENCE", path)

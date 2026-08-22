@@ -76,10 +76,40 @@
         "provenance_required": {"type": "boolean"},
         "validation_required": {"type": "boolean"},
         "validation_receipt_reference": {"type": "string", "minLength": 1},
+        "validation_receipt_sha256": {"$ref": "#/$defs/sha256"},
         "artifact_sha256": {"$ref": "#/$defs/sha256"},
         "published_sha256": {"$ref": "#/$defs/sha256"},
         "supersedes": {"type": ["string", "null"], "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+){2,}$"}
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"artifact_status": {"const": "SYNTHETIC_VALIDATED"}},
+            "required": ["artifact_status"]
+          },
+          "then": {
+            "required": [
+              "candidate_output_path", "artifact_sha256",
+              "validation_receipt_reference", "validation_receipt_sha256"
+            ],
+            "properties": {
+              "provisional": {"const": true},
+              "caption_status": {"const": "SYNTHETIC_DISCLAIMER"},
+              "generator": {
+                "properties": {"status": {"const": "EXISTS"}},
+                "required": ["status", "path", "repository_revision", "sha256"]
+              },
+              "required_inputs": {"const": ["PUBLIC_SYNTHETIC_INPUT"]},
+              "data_classification": {"const": "PUBLIC_SYNTHETIC"},
+              "protected_execution_required": {"const": false},
+              "disclosure_review_required": {"const": false},
+              "disclosure_state": {"const": "NOT_APPLICABLE_SYNTHETIC"},
+              "publication_status": {"const": "NOT_APPROVED"},
+              "validation_required": {"const": true}
+            }
+          }
+        }
+      ]
     }
   }
 }

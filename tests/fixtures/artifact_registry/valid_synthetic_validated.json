@@ -24,13 +24,14 @@
     "scientific_approval_required": false,
     "disclosure_review_required": false,
     "disclosure_state": "NOT_APPLICABLE_SYNTHETIC",
-    "publication_status": "NOT_PROPOSED",
+    "publication_status": "NOT_APPROVED",
     "candidate_output_path": "outputs/figures/test_synthetic_validated.png",
     "manuscript_destination": "SYNTHETIC_DEMO_ONLY",
     "manuscript_reference_key": "TEST_FIG_SYNTH_01",
     "provenance_required": true,
     "validation_required": true,
-    "validation_receipt_reference": "TEST_SYNTHETIC_VALIDATION_01",
+    "validation_receipt_reference": "outputs/tables/test/validation_receipt.json",
+    "validation_receipt_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
     "artifact_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
     "supersedes": null
   }]

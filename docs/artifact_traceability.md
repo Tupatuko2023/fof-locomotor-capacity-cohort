@@ -184,6 +184,38 @@ artifact hash and stable validation-receipt reference. Disclosure remains
 `NOT_APPLICABLE_SYNTHETIC`, publication remains `NOT_APPROVED`, and the
 manuscript destination remains `NEEDS_VERIFICATION`.
 
+## Synthetic validation promotion infrastructure
+
+The `SYNTHETIC_CANDIDATE -> SYNTHETIC_VALIDATED` transition is a
+filesystem-backed, fail-closed evidence gate. A validated registry entry must
+bind an exact artifact revision and SHA-256 to a canonical promotion receipt
+and receipt SHA-256. The receipt separately binds generator, synthetic
+input/control, execution identity, validator, validation checks and supporting
+evidence.
+
+The common receipt schema is
+`config/artifacts/synthetic_promotion_receipt.schema.json`. The filesystem
+validator is `scripts/validation/validate_synthetic_promotion.py`. It supports
+`SINGLE_FILE_TABLE_V1` and `QC_PROVENANCE_BUNDLE_V1` without changing the
+promotion meaning between profiles. For the bundle profile, the promoted
+artifact hash is the exact `bundle_manifest.json` hash; the bundle's internal
+validation receipt remains supporting evidence.
+
+The validator requires at least one explicit repository-relative
+`--canonical-root` argument. Both the artifact and its promotion receipt must
+be regular, non-symlink files below an approved root. This mechanism does not
+approve a root by itself.
+
+```text
+CANONICAL_STORAGE_POLICY: NEEDS_OWNER_DECISION
+```
+
+No current A1 entry is promoted by the infrastructure implementation. Promotion
+does not establish numerical reproduction, protected execution validation,
+disclosure approval, publication approval, manuscript placement or scientific
+interpretation. Synthetic validated entries remain provisional, carry the
+synthetic disclaimer and keep publication status `NOT_APPROVED`.
+
 ## Decisions outside this scaffold
 
 The following remain outside the registry implementation and require their
