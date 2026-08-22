@@ -316,7 +316,8 @@ Validation or acceptance claim.
 - Approved protected analysis environment.
 - `renv` activation and dependency-lock status.
 - Publication review authority and final manuscript/supplement scope.
-- SCI-03C canonical meaning, due to a conflict between README and the normative closeout wording.
+- SCI-03C-A coverage-rule and SCI-03C-B temporal-application scientific
+  decisions; the identifier mapping itself is Owner-approved.
 - SCI-SEM-COHORT scientific approval.
 - RET-01 authoritative policy reference.
 - Final root cause of the Zenodo workflow registration failure.
@@ -407,9 +408,10 @@ current_state:
 
 The following remain open and are not promoted by this alignment:
 
-- `SCI-03C: CONFLICT / NEEDS_VERIFICATION`. README and the normative
-  closeout/specification currently assign incompatible meanings to this
-  identifier. No canonical meaning is asserted pending Owner clarification.
+- `SCI-03C`: identifier mapping is Owner-approved. `SCI-03C` is the z3
+  component-coverage decision family, `SCI-03C-A` the minimum-component rule,
+  and `SCI-03C-B` temporal application. The scientific rule choices remain
+  `NEEDS_VERIFICATION`.
 - `SCI-SEM-COHORT`: scientific approval remains deferred.
 - `SCI-03D`: remains `IMPLEMENTATION_SAFEGUARD_ONLY`.
 - `RET-01`: remains `POLICY_REFERENCE_REQUIRED`.

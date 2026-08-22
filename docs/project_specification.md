@@ -896,7 +896,7 @@ approved_decisions:
   SCI-SEM-LC: approved
   SCI-SEM-CHAIR: approved
 deferred_or_limited_items:
-  SCI-03C: CONFLICT / NEEDS_VERIFICATION
+  SCI-03C: IDENTIFIER_MAPPING_APPROVED / SCIENTIFIC_RULES_NEEDS_VERIFICATION
   SCI-SEM-COHORT: NEEDS_VERIFICATION
   SCI-03D: IMPLEMENTATION_SAFEGUARD_ONLY
   RET-01: POLICY_REFERENCE_REQUIRED
@@ -904,6 +904,22 @@ inactive_under_option_a:
   - SCI-REF
   - SCI-TOL
 ```
+
+### Owner decision — SCI-03C / SCI-03D identifier mapping
+
+Decision: `APPROVED — IDENTIFIER MAPPING ONLY`.
+
+- `SCI-03C` is the z3 component-coverage decision family.
+- `SCI-03C-A` is the component coverage threshold / minimum-component rule.
+- `SCI-03C-B` is the temporal application rule.
+- `SCI-03D` is the separate 0.40 producer gate.
+- Historical `SCI-03C = 0.40 producer threshold` terminology is superseded.
+
+This decision does not select the SCI-03C-A rule or SCI-03C-B window, approve
+SCI-03D scientifically, assign the Z3 sensitivity artifact a manuscript role,
+authorize protected execution or egress, or grant disclosure or publication
+approval. Those decisions remain `NEEDS_VERIFICATION` under their respective
+authorities.
 
 The approved structural target is the K50 WIDE analysis contract with 12-month
 locomotor capacity (`lc12`) as outcome, baseline locomotor capacity (`lc0`) and
@@ -919,7 +935,7 @@ values are missing. Earlier statements that the chair-rise formula itself is
 unresolved are superseded for this bounded contract.
 
 The only defensible affirmative claim for this closeout, excluding the
-conflicted SCI-03C identifier semantics, is:
+still-deferred SCI-03C-A and SCI-03C-B scientific rules, is:
 
 > A1/K50 conforms structurally and methodologically to the currently
 > Owner-approved analysis contracts at the structural and methodological
@@ -932,9 +948,10 @@ A, `SCI-REF` and `SCI-TOL` are inactive rather than failed or completed.
 
 The deferred scientific register remains active:
 
-- `SCI-03C`: `CONFLICT / NEEDS_VERIFICATION`. README and this normative
-  closeout/specification currently assign incompatible meanings to this
-  identifier. No canonical meaning is asserted until Owner clarification.
+- `SCI-03C`: identifier mapping is approved: `SCI-03C` is the z3
+  component-coverage decision family, with `SCI-03C-A` for the
+  minimum-component rule and `SCI-03C-B` for temporal application. The
+  scientific rule choices remain `NEEDS_VERIFICATION`.
 - `SCI-SEM-COHORT`: final cohort semantics remain `NEEDS_VERIFICATION` as a
   scientific approval item; their implemented structure may be described only
   within the bounded conformity claim above.
@@ -990,7 +1007,7 @@ canonical_current_state:
   scientific_phase: CLOSED_WITH_DEFERRED_SCIENTIFIC_ITEMS
   scientific_state:
     SCI-SEM-CHAIR: approved for the bounded A1/K50 contract
-    SCI-03C: CONFLICT / NEEDS_VERIFICATION
+    SCI-03C: IDENTIFIER_MAPPING_APPROVED / SCIENTIFIC_RULES_NEEDS_VERIFICATION
     SCI-SEM-COHORT: NEEDS_VERIFICATION
     SCI-03D: IMPLEMENTATION_SAFEGUARD_ONLY
     RET-01: POLICY_REFERENCE_REQUIRED
@@ -1053,17 +1070,19 @@ canonical_current_state:
     rule: each write or external action requires a separately approved bounded Work Package
 ```
 
-The SCI-03C conflict is intentionally preserved. The affected semantic scope
-is suspended pending Owner clarification; this alignment does not choose
-between the incompatible meanings. `SCI-03D` remains an implementation
-safeguard only. Participant-data, privacy, disclosure and publication
-boundaries are unchanged.
+The SCI-03C identifier conflict is resolved by Owner decision. `SCI-03C` now
+denotes the z3 component-coverage decision family, `SCI-03C-A` the
+minimum-component rule, `SCI-03C-B` temporal application, and `SCI-03D` the
+separate 0.40 producer gate. This alignment does not choose either SCI-03C
+scientific rule or scientifically approve SCI-03D; those remain deferred.
+Participant-data, privacy, disclosure and publication boundaries are unchanged.
 
 Open governance and release items remain:
 
 - protected analysis environment;
 - final manuscript/supplement boundary and disclosure authority;
 - steward and review cadence;
-- `SCI-SEM-COHORT`, `RET-01` and the SCI-03C conflict;
+- `SCI-SEM-COHORT`, `RET-01`, SCI-03C-A/B scientific choices and SCI-03D
+  scientific approval;
 - AI-assistance disclosure;
 - any future `renv` adoption, which requires a separate architecture decision.

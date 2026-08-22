@@ -7,8 +7,11 @@ Status: `SYNTHETIC_ONLY`; protected execution is **not authorized**.
 This package prepares aggregate evidence for comparing `ANY_COMPONENT`,
 `MIN_2_OF_3`, and `REQUIRE_3_OF_3`. It does not select a rule, change K32 or
 K50, access participant data, produce scientific results, or authorize egress.
-SCI-03C-A (coverage threshold) and SCI-03C-B (temporal application) remain
-Scientific Owner decisions. SCI-03D remains a separate 0.40 producer gate.
+The Owner-approved identifier mapping defines SCI-03C as the z3
+component-coverage decision family, SCI-03C-A as the coverage threshold,
+SCI-03C-B as temporal application, and SCI-03D as the separate 0.40 producer
+gate. The SCI-03C-A and SCI-03C-B scientific choices and SCI-03D scientific
+approval remain Scientific Authority decisions.
 
 ## Aggregate-output contract
 
