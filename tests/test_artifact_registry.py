@@ -44,14 +44,15 @@ class ArtifactRegistryTests(unittest.TestCase):
         )
         validator.validate_registry(registry)
         artifacts = registry["artifacts"]
-        self.assertEqual(len(artifacts), 4)
+        self.assertEqual(len(artifacts), 5)
         self.assertEqual({item["artifact_id"] for item in artifacts}, {
             "A1-TABLE-PRIMARY-MODEL-01",
             "A1-SUPPLEMENT-MISSINGNESS-01",
             "A1-SUPPLEMENT-Z3-SENSITIVITY-01",
             "A1-SUPPLEMENT-FI22-SENSITIVITY-01",
+            "A1-SUPPLEMENT-QC-PROVENANCE-01",
         })
-        self.assertEqual(len({item["manuscript_reference_key"] for item in artifacts}), 4)
+        self.assertEqual(len({item["manuscript_reference_key"] for item in artifacts}), 5)
         for artifact in artifacts:
             self.assertEqual(artifact["artifact_status"], "SYNTHETIC_CANDIDATE")
             self.assertEqual(artifact["disclosure_state"], "NOT_APPLICABLE_SYNTHETIC")
@@ -59,6 +60,9 @@ class ArtifactRegistryTests(unittest.TestCase):
             self.assertTrue(artifact["provisional"])
             self.assertNotIn("artifact_sha256", artifact)
             self.assertNotIn("validation_receipt_reference", artifact)
+        qc = next(item for item in artifacts if item["artifact_id"] == "A1-SUPPLEMENT-QC-PROVENANCE-01")
+        self.assertFalse(qc["scientific_approval_required"])
+        self.assertEqual(qc["manuscript_destination"], "NEEDS_VERIFICATION")
 
     def test_invalid_fixture_matrix_is_complete(self):
         cases = load("invalid_cases.json")["synthetic_test_cases"]

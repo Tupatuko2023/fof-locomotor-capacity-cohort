@@ -143,6 +143,47 @@ python -m unittest discover -s tests -p 'test_artifact_registry.py'
 The fixtures do not encode cohort sizes, estimates, p-values, confidence
 intervals or any other research-result values.
 
+## Public synthetic QC/provenance bundle
+
+`A1-SUPPLEMENT-QC-PROVENANCE-01` is a provisional, synthetic-only technical
+bundle contract. It is not an accepted manuscript supplement or a report of
+study findings. The implementation uses only the approved synthetic WIDE
+control and does not transform production receipts, decision logs, modeled
+cohort exports or raw `sessionInfo()` output into public artifacts.
+
+Generate the bundle into a new or empty directory:
+
+```sh
+python scripts/demo/build_qc_provenance_bundle.py --output-dir outputs/demo/qc-provenance
+```
+
+Validate the generated directory independently:
+
+```sh
+python scripts/validation/validate_qc_provenance_bundle.py \
+  outputs/demo/qc-provenance/A1-SUPPLEMENT-QC-PROVENANCE-01
+```
+
+The contract requires exactly eight files. Five bounded evidence payloads are
+hashed by `payload_manifest.json`. `validation_receipt.json` binds that exact
+payload-manifest digest to the validator path and validator SHA-256.
+`bundle_manifest.json` then binds the exact eight-name allowlist and the hashes
+of all seven other files. The canonical registry artifact SHA-256 is the
+SHA-256 of the exact `bundle_manifest.json` bytes. An archive or other transfer
+container has a separate transport hash and cannot replace this identity.
+
+JSON is canonicalized as UTF-8 without BOM, LF terminated, compact, with
+lexicographically sorted object keys and fixed member ordering. Timestamps are
+intentionally omitted from canonical identity. The bounded runtime metadata
+records a stable runtime profile and generator provenance; it does not contain
+raw environment, filesystem or session dumps.
+
+The implementation lifecycle ceiling is `SYNTHETIC_CANDIDATE`. Promotion to
+`SYNTHETIC_VALIDATED` requires a separately accepted canonical revision,
+artifact hash and stable validation-receipt reference. Disclosure remains
+`NOT_APPLICABLE_SYNTHETIC`, publication remains `NOT_APPROVED`, and the
+manuscript destination remains `NEEDS_VERIFICATION`.
+
 ## Decisions outside this scaffold
 
 The following remain outside the registry implementation and require their

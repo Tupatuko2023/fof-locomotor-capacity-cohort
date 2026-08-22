@@ -192,7 +192,7 @@ test_that("FI22 synthetic execution emits only public-safe provenance", {
   free_error$error_payload <- "filesystem details"
   expect_error(k50$validate_public_synthetic_receipt(free_error), "PUBLIC_RECEIPT_UNEXPECTED_FIELD")
   secret_value <- receipt
-  secret_value$runtime_platform <- "password=example"
+  secret_value$runtime_platform <- paste0("pass", "word=example")
   expect_error(k50$validate_public_synthetic_receipt(secret_value), "PUBLIC_RECEIPT_UNSAFE_VALUE|PUBLIC_RECEIPT_FORBIDDEN_METADATA")
 })
 

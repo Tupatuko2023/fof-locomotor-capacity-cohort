@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/a1/qc_provenance_bundle.schema.json",
+  "title": "A1 public synthetic QC and provenance bundle contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_id",
+    "artifact_revision",
+    "data_classification",
+    "synthetic_disclaimer",
+    "canonical_json",
+    "timestamp_policy",
+    "exact_member_names",
+    "members",
+    "payload_manifest_sha256",
+    "validation_receipt_sha256",
+    "artifact_hash_contract"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact_id": {"const": "A1-SUPPLEMENT-QC-PROVENANCE-01"},
+    "artifact_revision": {"type": "integer", "minimum": 1},
+    "data_classification": {"const": "PUBLIC_SYNTHETIC"},
+    "synthetic_disclaimer": {"const": "Synthetic structural-validation evidence only; not study findings."},
+    "canonical_json": {"const": "UTF-8_NO_BOM_LF_SORTED_KEYS_COMPACT"},
+    "timestamp_policy": {"const": "OMITTED_FROM_CANONICAL_IDENTITY"},
+    "exact_member_names": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "members": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {"$ref": "#/$defs/member"}
+    },
+    "payload_manifest_sha256": {"$ref": "#/$defs/sha256"},
+    "validation_receipt_sha256": {"$ref": "#/$defs/sha256"},
+    "artifact_hash_contract": {"const": "SHA256_EXACT_BUNDLE_MANIFEST_BYTES"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "role", "sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z]+)$"},
+        "role": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

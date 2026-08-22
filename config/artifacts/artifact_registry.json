@@ -33,6 +33,35 @@
       "supersedes": null
     },
     {
+      "artifact_id": "A1-SUPPLEMENT-QC-PROVENANCE-01",
+      "artifact_revision": 1,
+      "provisional": true,
+      "artifact_type": "SUPPLEMENT",
+      "artifact_status": "SYNTHETIC_CANDIDATE",
+      "title": "Public synthetic QC and provenance bundle",
+      "caption_status": "SYNTHETIC_DISCLAIMER",
+      "analysis_source": "Deterministic public synthetic QC and provenance bundle contract",
+      "generator": {
+        "status": "EXISTS",
+        "path": "scripts/demo/build_qc_provenance_bundle.py",
+        "repository_revision": "3a908b7b0ccb8ec899bc5b9959bd2a7769cdec33",
+        "sha256": "a17b7a315f2184005ec4489e10b23c95bf3da07e38de2d5b31e5b3de4c6bb3f6"
+      },
+      "required_inputs": ["PUBLIC_SYNTHETIC_INPUT"],
+      "data_classification": "PUBLIC_SYNTHETIC",
+      "execution_environment": "PUBLIC_SYNTHETIC_QC_PROVENANCE_BUNDLE",
+      "protected_execution_required": false,
+      "scientific_approval_required": false,
+      "disclosure_review_required": false,
+      "disclosure_state": "NOT_APPLICABLE_SYNTHETIC",
+      "publication_status": "NOT_APPROVED",
+      "manuscript_destination": "NEEDS_VERIFICATION",
+      "manuscript_reference_key": "NEEDS_VERIFICATION_A1_QC_PROVENANCE_01",
+      "provenance_required": true,
+      "validation_required": true,
+      "supersedes": null
+    },
+    {
       "artifact_id": "A1-SUPPLEMENT-MISSINGNESS-01",
       "artifact_revision": 1,
       "provisional": true,
